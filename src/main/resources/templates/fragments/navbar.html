@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<!-- ⚙️ Fragmento de NAVBAR -->
+<head>
+    <!-- El CSS y los scripts de Bootstrap deben estar en el layout base (no aquí) -->
+</head>
+
+<body>
+
+<!-- ✅ NAVBAR USUARIO -->
+<nav th:if="${#authorization.expression('hasRole(''USER'')')}"
+     th:fragment="navbarUsuario"
+     class="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
+
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/user/home}">🐱 CatSoup</a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navUser"
+                aria-controls="navUser" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navUser">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/user/home}">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/user/publicaciones}">Publicaciones</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/user/progreso}">Progreso</a></li>
+            </ul>
+            <a th:href="@{/logout}" class="btn btn-light">Salir</a>
+        </div>
+    </div>
+</nav>
+
+
+<!-- ✅ NAVBAR ADMIN -->
+<nav th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+     th:fragment="navbarAdmin"
+     class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/admin/home}">👑 CatSoup Admin</a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navAdmin"
+                aria-controls="navAdmin" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navAdmin">
+            <ul class="navbar-nav me-auto">
+
+                <!-- 🔹 Botón de inicio -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/home}">Inicio</a>
+                </li>
+
+                <!-- 🔹 Menú desplegable de gestión -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="gestionDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Gestión
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="gestionDropdown">
+                        <li><a class="dropdown-item" th:href="@{/admin/gatos}">🐱 Gatos</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/vestuario}">👗 Vestuario</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/estaciones}">🏡 Estaciones</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+
+            <a th:href="@{/logout}" class="btn btn-light">Salir</a>
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>
+

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Publicación 🐾</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 1rem;
+        }
+
+        .btn-primary {
+            background-color: #ff7b54;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #ff9559;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .preview-img {
+            width: 100%;
+            border-radius: 0.5rem;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: navbarUsuario"></div>
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="text-center mb-4">🐱 Crear una nueva publicación</h2>
+
+        <form th:action="@{/user/publicaciones/crear}" method="post" enctype="multipart/form-data">
+
+            <!-- Título -->
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Título</label>
+                <input type="text" id="titulo" name="titulo" class="form-control" placeholder="Ejemplo: Mi gato jugando con una caja" required>
+            </div>
+
+            <!-- Contenido -->
+            <div class="mb-3">
+                <label for="contenido" class="form-label">Contenido</label>
+                <textarea id="contenido" name="contenido" class="form-control" rows="4" placeholder="Escribe algo interesante sobre tu publicación..." required></textarea>
+            </div>
+
+            <!-- Imagen (opcional) -->
+            <div class="mb-3">
+                <label for="imagen" class="form-label">Subir imagen (opcional)</label>
+                <input type="file" id="imagen" name="imagen" class="form-control" accept="image/*" onchange="previewImage(event)">
+                <img id="preview" class="preview-img" alt="Vista previa">
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">🚀 Publicar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Mostrar vista previa de la imagen
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('preview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+
+</body>
+</html>

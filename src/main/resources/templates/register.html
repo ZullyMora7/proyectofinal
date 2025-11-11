@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrarse - CatSoup</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+
+            <div class="card shadow p-4">
+
+                <h3 class="text-center">Crear cuenta 🐱</h3>
+
+                <form th:action="@{/register}" method="post">
+
+                    <label class="form-label mt-3">Usuario:</label>
+                    <input type="text" class="form-control" name="username" required>
+
+                    <label class="form-label mt-3">Correo:</label>
+                    <input type="email" class="form-control" name="email" required>
+
+                    <label class="form-label mt-3">Contraseña:</label>
+                    <input type="password" class="form-control" name="password" required>
+
+                    <button class="btn btn-success w-100 mt-4">Registrarme</button>
+
+                </form>
+
+                <p class="text-center mt-3">
+                    ¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

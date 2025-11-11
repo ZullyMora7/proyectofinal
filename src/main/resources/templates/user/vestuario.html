@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Vestuario 👗🐱</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .form-switch .form-check-input:checked {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .form-switch .form-check-input {
+            cursor: pointer;
+        }
+        .list-group-item {
+            transition: background-color 0.3s ease;
+        }
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+
+    <script>
+        function toggleVestuario(id, check) {
+            const val = check.checked;
+            fetch("/user/progreso/vestuario/toggle", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "vestuarioId=" + id + "&obtenido=" + val
+            }).then(res => {
+                if (!res.ok) alert("Error al actualizar el progreso 😿");
+            });
+        }
+    </script>
+</head>
+
+<body class="bg-light">
+<div th:replace="fragments/navbar :: navbarUsuario"></div>
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Mi Vestuario 👗🐱</h2>
+        <p class="text-muted">Marca los atuendos que ya has conseguido.</p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="list-group list-group-flush">
+                <div th:each="v : ${vestuarios}" class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <img th:if="${v.imagen != null}" th:src="@{${v.imagen}}"
+                             class="rounded me-3" style="width:50px; height:50px; object-fit:cover;">
+                        <strong th:text="${v.nombre}"></strong>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               th:checked="${idsObtenidos != null and idsObtenidos.contains(v.id)}"
+                               th:onchange="'toggleVestuario(' + ${v.id} + ', this)'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+

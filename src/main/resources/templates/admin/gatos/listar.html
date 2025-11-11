@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Gatos - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div th:replace="fragments/navbar :: navbarAdmin"></div>
+
+<div class="container mt-4">
+    <h2 class="mb-3">Administrar Gatos 🐱</h2>
+
+    <a th:href="@{/admin/gatos/crear}" class="btn-rosa">Añadir Gato</a>
+    <br><br>
+
+    <!-- ✅ Mensaje de error si no se pudo eliminar -->
+    <div th:if="${param.error}" class="alert alert-danger">
+        No se puede eliminar este gato porque está asociado a uno o más usuarios.
+    </div>
+
+    <table class="table table-bordered table-striped align-middle">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Imagen</th>
+            <th style="width: 180px;">Acciones</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="g : ${gatos}">
+            <td th:text="${g.nombre}"></td>
+            <td th:text="${g.descripcion}"></td>
+
+            <!-- ✅ Mostrar imagen -->
+            <td>
+                <img th:if="${g.imagen != null}"
+                     th:src="${g.imagen}"
+                     alt="Imagen del gato"
+                     style="width: 100px; height: 150px; object-fit: cover; border-radius: 10px; box-shadow: 0 0 4px rgba(0,0,0,0.3);">
+                <span th:if="${g.imagen == null}" class="text-muted">Sin imagen</span>
+            </td>
+
+            <!-- ✅ Acciones -->
+            <td class="alineado-horizontal">
+                <a th:href="@{'/admin/gatos/editar/' + ${g.id}}" class="btn-rosa">Editar</a>
+                <a th:href="@{'/admin/gatos/eliminar/' + ${g.id}}"
+                   class="btn-rosaclaro"
+                   onclick="return confirmarEliminacion(event)">Eliminar</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ✅ Script de confirmación -->
+<script>
+function confirmarEliminacion(event) {
+    if (!confirm('⚠️ ¿Estás seguro de eliminar este gato?')) {
+        event.preventDefault();
+        return false;
+    }
+    return true;
+}
+</script>
+
+</body>
+</html>
+
+

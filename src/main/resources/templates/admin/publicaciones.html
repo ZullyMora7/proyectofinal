@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Administrar Publicaciones 🐾</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+<!-- Navbar del admin -->
+<div th:replace="fragments/navbar :: navbarAdmin"></div>
+
+<!-- Contenedor principal -->
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Gestión de Publicaciones 🐾</h2>
+
+        <!-- Botón para crear publicación -->
+        <a th:href="@{/admin/publicaciones/crear}" class="btn btn-primary">
+            ➕ Crear publicación
+        </a>
+    </div>
+
+    <hr>
+
+    <!-- Si no hay publicaciones -->
+    <div th:if="${#lists.isEmpty(publicaciones)}" class="text-center text-muted mt-4">
+        <p>No hay publicaciones todavía 😿</p>
+    </div>
+
+    <!-- Listado de publicaciones -->
+    <div th:each="pub : ${publicaciones}" class="card mb-4 shadow-sm border-0">
+        <div class="card-body">
+
+            <!-- Encabezado: usuario + fecha -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex align-items-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png"
+                         alt="user" width="40" class="rounded-circle me-2">
+                    <div>
+                        <strong th:text="${pub.user.username}">Usuario</strong><br>
+                        <small class="text-muted" th:text="${pub.fecha}">2025-11-08</small>
+                    </div>
+                </div>
+
+                <!-- Botón eliminar (el admin puede eliminar todos) -->
+                <a th:href="@{'/admin/publicaciones/eliminar/' + ${pub.id}}"
+                   class="btn btn-sm btn-danger"
+                   onclick="return confirm('¿Estás seguro de eliminar esta publicación?');">
+                    🗑️ Eliminar
+                </a>
+            </div>
+
+            <!-- Contenido de la publicación -->
+            <h5 th:text="${pub.titulo}" class="card-title mt-2"></h5>
+            <p th:text="${pub.contenido}" class="card-text"></p>
+
+            <!-- Imagen opcional -->
+            <div th:if="${pub.imagen}" class="text-center mt-3">
+                <img th:src="@{${pub.imagen}}" class="img-fluid rounded" style="max-height: 300px;">
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
