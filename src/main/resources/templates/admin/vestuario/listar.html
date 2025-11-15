@@ -20,7 +20,7 @@
         <thead class="table-light">
         <tr>
             <th>Nombre</th>
-            <th>Tipo</th>
+            <th>Descripción</th>
             <th>Imagen</th>
             <th>Acciones</th>
         </tr>
@@ -29,9 +29,9 @@
         <tbody>
         <tr th:each="v : ${vestuarios}">
             <td th:text="${v.nombre}"></td>
-            <td th:text="${v.tipo}"></td>
+            <td th:text="${v.descripcion}"></td>
 
-            <!-- ✅ Mostrar imagen -->
+            <!-- Imagen -->
             <td>
                 <img th:if="${v.imagen != null}"
                      th:src="@{${v.imagen}}"
@@ -55,4 +55,5 @@
 
 </body>
 </html>
+
 

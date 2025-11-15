@@ -45,8 +45,9 @@ public class ProgresoVestuarioController {
         List<Vestuario> todos = vestuarioRepository.findAll();
         List<UsuarioVestuario> obtenidos = usuarioVestuarioService.findByUser(user);
 
-        // ✅ Solo enviamos los IDs de los vestuarios obtenidos (más limpio para el HTML)
+        // ✅ AHORA SOLO ENVÍA LOS ID MARCADOS COMO OBTENIDOS (ANTES LOS ENVIABA TODOS)
         List<Long> idsObtenidos = obtenidos.stream()
+                .filter(UsuarioVestuario::isObtenido)   // ← 🔥 LÍNEA CORREGIDA
                 .map(uv -> uv.getVestuario().getId())
                 .collect(Collectors.toList());
 
@@ -93,4 +94,3 @@ public class ProgresoVestuarioController {
         return "ok";
     }
 }
-

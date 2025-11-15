@@ -13,7 +13,6 @@
 <div class="container mt-4">
     <h2>Editar Vestuario</h2>
 
-    <!-- ✅ Añadimos enctype para permitir la subida de archivos -->
     <form th:action="@{'/admin/vestuario/actualizar/' + ${vestuario.id}}"
           th:object="${vestuario}"
           method="post"
@@ -22,17 +21,16 @@
         <label class="form-label">Nombre</label>
         <input type="text" class="form-control mb-3" th:field="*{nombre}" required>
 
-        <label class="form-label">Tipo</label>
-        <input type="text" class="form-control mb-3" th:field="*{tipo}" required>
+        <label class="form-label">Descripción</label>
+        <input type="text" class="form-control mb-3" th:field="*{descripcion}" required>
 
-        <!-- ✅ Campo de imagen cambiado a subida de archivo -->
         <label class="form-label">Imagen</label>
         <input type="file" name="imagenArchivo" accept="image/*" class="form-control mb-3">
 
-        <!-- ✅ Mostrar imagen actual si existe -->
         <div th:if="${vestuario.imagen != null}">
             <p class="text-muted mt-2">Imagen actual:</p>
-            <img th:src="@{${vestuario.imagen}}" alt="Imagen del vestuario"
+            <img th:src="@{${vestuario.imagen}}"
+                 alt="Imagen del vestuario"
                  class="img-thumbnail mb-3"
                  style="width: 150px; height: 150px; object-fit: cover;">
         </div>
@@ -43,3 +41,4 @@
 
 </body>
 </html>
+

@@ -44,12 +44,10 @@ public class AdminVestuarioController {
             File carpeta = new File(rutaUploads);
             if (!carpeta.exists()) carpeta.mkdirs();
 
-            // ✅ Generar nombre único
             String nombreArchivo = UUID.randomUUID() + "_" + imagenArchivo.getOriginalFilename();
             Path rutaArchivo = Paths.get(rutaUploads + nombreArchivo);
             Files.copy(imagenArchivo.getInputStream(), rutaArchivo, StandardCopyOption.REPLACE_EXISTING);
 
-            // ✅ Guardar la ruta accesible desde el navegador
             vestuario.setImagen("/uploads/vestuario/" + nombreArchivo);
         }
 
@@ -64,7 +62,7 @@ public class AdminVestuarioController {
         return "admin/vestuario/editar";
     }
 
-    // ✅ ACTUALIZAR VESTUARIO (si se sube nueva imagen, reemplaza)
+    // ✅ ACTUALIZAR VESTUARIO
     @PostMapping("/actualizar/{id}")
     public String actualizar(@PathVariable Long id,
                              @ModelAttribute Vestuario vestActualizado,
@@ -73,7 +71,7 @@ public class AdminVestuarioController {
         Vestuario vestuario = vestuarioService.findById(id);
 
         vestuario.setNombre(vestActualizado.getNombre());
-        vestuario.setTipo(vestActualizado.getTipo());
+        vestuario.setDescripcion(vestActualizado.getDescripcion()); // ← CAMBIADO
 
         if (imagenArchivo != null && !imagenArchivo.isEmpty()) {
             String rutaUploads = "uploads/vestuario/";
@@ -98,3 +96,4 @@ public class AdminVestuarioController {
         return "redirect:/admin/vestuario";
     }
 }
+

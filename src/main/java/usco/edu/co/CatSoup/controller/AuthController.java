@@ -1,5 +1,8 @@
 package usco.edu.co.CatSoup.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,7 +15,6 @@ public class AuthController {
 
     @GetMapping("/")
     public String root() {
-        // Página pública inicial
         return "home";
     }
 
@@ -28,13 +30,10 @@ public class AuthController {
 
     @GetMapping("/redirect")
     public String redirectAfterLogin(Authentication auth) {
-
-        // ✅ Verificamos si la autenticación no es nula (seguridad)
         if (auth == null) {
             return "redirect:/login";
         }
 
-        // ✅ Redirigir según el rol del usuario
         for (GrantedAuthority authority : auth.getAuthorities()) {
             String role = authority.getAuthority();
             if (role.equals("ROLE_ADMIN")) {
@@ -44,8 +43,16 @@ public class AuthController {
             }
         }
 
-        // ✅ Si no tiene rol válido, lo mandamos al login
         return "redirect:/login?error=rol_no_valido";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate(); // 🔥 Cierra la sesión REALMENTE
+        }
+        return "redirect:/login?logout";
     }
 }
 

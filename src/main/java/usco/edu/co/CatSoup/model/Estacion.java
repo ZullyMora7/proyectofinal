@@ -1,5 +1,7 @@
 package usco.edu.co.CatSoup.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,4 +19,5 @@ public class Estacion {
     private String descripcion;
 
     private String imagen;
+
 }

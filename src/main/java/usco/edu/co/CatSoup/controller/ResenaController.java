@@ -5,12 +5,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import usco.edu.co.CatSoup.model.Resena;
 import usco.edu.co.CatSoup.model.User;
+import usco.edu.co.CatSoup.model.Vestuario;   // ✅ IMPORTANTE
 import usco.edu.co.CatSoup.service.ResenaService;
 import usco.edu.co.CatSoup.service.UserService;
 import usco.edu.co.CatSoup.service.GatoService;
-import usco.edu.co.CatSoup.service.EstacionService;  // ✅ IMPORTANTE
+import usco.edu.co.CatSoup.service.EstacionService;
+import usco.edu.co.CatSoup.service.VestuarioService; // ✅ IMPORTANTE
 
 @Controller
 @RequiredArgsConstructor
@@ -20,7 +23,8 @@ public class ResenaController {
     private final ResenaService resenaService;
     private final UserService userService;
     private final GatoService gatoService;
-    private final EstacionService estacionService; // ✅ AGREGADO
+    private final EstacionService estacionService;
+    private final VestuarioService vestuarioService; // ✅ AGREGADO
 
     @PostMapping("/agregar")
     public String agregarResena(@RequestParam int calificacion,
@@ -48,14 +52,39 @@ public class ResenaController {
         };
     }
 
-    // ✅ Ver reseñas de un gato con nombre real
     @GetMapping("/ver/gato/{id}")
     public String verResenasGato(@PathVariable Long id, Model model) {
 
-        var gato = gatoService.findById(id); // ✅ correcto
+        var gato = gatoService.findById(id);
 
         model.addAttribute("resenas", resenaService.getResenas("gato", id));
         model.addAttribute("titulo", "Reseñas del gato " + gato.getNombre());
+
+        return "resenas/listar";
+    }
+
+    @GetMapping("/ver/estacion/{id}")
+    public String verResenasEstacion(@PathVariable Long id, Model model) {
+
+        var estacion = estacionService.findById(id);
+
+        model.addAttribute("resenas", resenaService.getResenas("estacion", id));
+        model.addAttribute("titulo", "Reseñas de la estación " + estacion.getNombre());
+
+        return "resenas/listar";
+    }
+
+    @GetMapping("/ver/vestuario/{id}")
+    public String verResenasVestuario(@PathVariable Long id, Model model) {
+
+        Vestuario vestuario = vestuarioService.findById(id); // ✅ CORRECTO
+        model.addAttribute("vestuario", vestuario);
+
+        model.addAttribute("resenas",
+                resenaService.getResenas("vestuario", id)); // ✅ REUTILIZA MISMO MÉTODO
+
+        model.addAttribute("titulo",
+                "Reseñas del vestuario " + vestuario.getNombre());
 
         return "resenas/listar";
     }
@@ -66,7 +95,6 @@ public class ResenaController {
         Resena r = resenaService.findById(id);
 
         boolean esDueno = r.getUsuario().getEmail().equals(auth.getName());
-
         boolean esAdmin = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
@@ -79,16 +107,6 @@ public class ResenaController {
         return "redirect:/resenas/ver/" + r.getTipoObjeto() + "/" + r.getObjetoId();
     }
 
-    // ✅ Ver reseñas de una estación con nombre real
-    @GetMapping("/ver/estacion/{id}")
-    public String verResenasEstacion(@PathVariable Long id, Model model) {
-
-        var estacion = estacionService.findById(id); // ✅ YA FUNCIONA
-
-        model.addAttribute("resenas", resenaService.getResenas("estacion", id));
-        model.addAttribute("titulo", "Reseñas de la estación " + estacion.getNombre());
-
-        return "resenas/listarEstaciones";
-    }
 }
+
 

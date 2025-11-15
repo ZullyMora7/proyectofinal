@@ -9,9 +9,14 @@
     text-decoration: none !important;
     border-radius: 10px;
     font-weight: 600;
-    padding: 10px 20px;
+    width: 150px;     /* ancho */
+    height: 45px;     /* alto */
+    display: flex;    
+    justify-content: center;
+    align-items: center; /* centra el texto */
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(255, 105, 180, 0.3);
+    text-align: center;
 }
 
 .btn-rosa:hover {
@@ -27,28 +32,34 @@
 
 
 .btn-rosaclaro {
-    background-color: rgb(239, 120, 216); /* Rosa claro */
+    background-color: #f48cab; /* Rosa pastel oscuro (como la imagen) */
     color: white !important;
     border: none;
     outline: none !important;
+    width: 150px;     /* ancho */
+    height: 45px;     /* alto */
     text-decoration: none !important;
     border-radius: 10px;
     font-weight: 600;
-    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgb(208, 151, 199);
+    box-shadow: 0 4px 6px rgba(244, 140, 171, 0.4);
 }
 
 .btn-rosaclaro:hover {
-    background-color:  rgb(220, 139, 186); /* Un poco más oscuro al pasar */
-    box-shadow: 0 6px 10px rgb(211, 148, 189);
+    background-color: #ec759c; /* Un poquito más oscuro */
+    box-shadow: 0 6px 10px rgba(236, 117, 156, 0.5);
     transform: translateY(-2px);
 }
 
 .btn-rosaclaro:active {
-    background-color:  rgb(254, 105, 232); /* Más oscuro al presionar */
+    background-color: #d7658c; /* Más oscuro al presionar */
     transform: translateY(0);
 }
+
 
 .alineado-horizontal {
         display: flex;
@@ -89,5 +100,145 @@
     margin-top: 5px;
     display: block;
     word-wrap: break-word;
+}
+
+
+.descripcion{
+    max-width: 450px;
+    font-size: 15px;
+    line-height: 1.3;
+    margin-top: 5px;
+    padding: 6px;
+    border-radius: 6px;
+    word-wrap: break-word;
+    display: block;
+}
+
+.descripcion:empty::before {
+    content: " ";        /* ← mantiene el bloque abierto aunque esté vacío */
+    white-space: pre;
+}
+
+        /* ✅ SWITCH igual que en gatos */
+        .form-switch .form-check-input {
+            cursor: pointer;
+            background-color: #f8b6d2;
+            border-color: #f8b6d2;
+        }
+
+        .form-switch .form-check-input:checked {
+            background-color: #ff69b4;
+            border-color: #ff69b4;
+        }
+
+        .list-group-item { transition: background-color .3s ease; }
+        .list-group-item:hover { background-color: #f8f9fa; }
+
+        .progress {
+            position: relative;
+            height: 30px;
+            background-color: #ffd6e8; /* rosa claro */
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background-color: #ff69b4 !important; /* rosa fuerte */
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        
+/* ----------------------------- */
+/* 🌸 ESTILO ROSA PARA NAVBAR   */
+/* ----------------------------- */
+
+.navbar-rosa {
+    background: linear-gradient(90deg, #ffbad2, #ff9cc8);
+    border-bottom: 3px solid #ff7fb5;
+    box-shadow: 0 4px 10px rgba(255, 143, 187, 0.4);
+}
+
+.navbar-rosa .navbar-brand {
+    font-weight: bold;
+    color: white !important;
+    font-size: 1.4rem;
+}
+
+.navbar-rosa .nav-link {
+    color: white !important;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.navbar-rosa .nav-link:hover {
+    color: #ffe6f0 !important;
+    transform: translateY(-2px);
+}
+
+.navbar-rosa .dropdown-menu {
+    background: #ffe1ef;
+    border: none;
+    box-shadow: 0 4px 10px rgba(255, 143, 187, 0.3);
+}
+
+.navbar-rosa .dropdown-item {
+    color: #c54175;
+    font-weight: 500;
+}
+
+.navbar-rosa .dropdown-item:hover {
+    background: #ffd3e6;
+    color: #a82763;
+}
+
+/* Toggle button custom */
+.navbar-rosa .navbar-toggler {
+    border-color: #ffb1ce;
+    background: #ffb1ce;
+}
+
+.navbar-rosa .navbar-toggler-icon {
+    filter: brightness(0.2);
+}
+
+
+/* 🌸 Botón salir delicado */
+.btn-salir-delicado {
+    background: #ffe8f2;
+    border: 1px solid #ffb6d6;
+    color: #c6457e;
+    padding: 6px 16px;
+    border-radius: 18px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.25s ease-in-out;
+    box-shadow: 0 2px 6px rgba(255, 156, 200, 0.25);
+    outline: none !important;
+    text-decoration: none !important;
+}
+
+.btn-salir-delicado:hover {
+    background: #ffd6e9;
+    color: #a92f65;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 156, 200, 0.35);
+}
+
+.btn-salir-delicado:active {
+    transform: scale(0.97);
+    background: #ffcee4;
 }
 

@@ -27,34 +27,28 @@ public class ProgresoEstacionController {
     private final UserService userService;
 
     // ==========================================================
-    // 🔹 VISTA PRINCIPAL: muestra todas las estaciones + obtenidas
+    // 🔹 VISTA PRINCIPAL
     // ==========================================================
     @GetMapping
     public String vistaEstaciones(Model model, Authentication auth) {
 
-        // ✅ Verificación de sesión
-        if (auth == null || auth.getName() == null) {
+        if (auth == null || auth.getName() == null)
             return "redirect:/login";
-        }
 
         Optional<User> optionalUser = userService.findByEmail(auth.getName());
-        if (optionalUser.isEmpty()) {
+        if (optionalUser.isEmpty())
             return "redirect:/login";
-        }
 
         User user = optionalUser.get();
 
-        // ✅ Listas de estaciones
         List<Estacion> todas = estacionRepository.findAll();
         List<UsuarioEstacion> obtenidas = usuarioEstacionService.findByUser(user);
 
-        // ✅ Conjunto de IDs de estaciones obtenidas
         Set<Long> idsObtenidas = obtenidas.stream()
                 .map(ue -> ue.getEstacion() != null ? ue.getEstacion().getId() : null)
                 .filter(id -> id != null)
                 .collect(Collectors.toSet());
 
-        // ✅ Enviar al modelo
         model.addAttribute("estaciones", todas);
         model.addAttribute("obtenidas", obtenidas);
         model.addAttribute("idsObtenidas", idsObtenidas);
@@ -72,25 +66,22 @@ public class ProgresoEstacionController {
                                  @RequestParam boolean obtenido,
                                  Authentication auth) {
 
-        if (auth == null || auth.getName() == null) {
+        if (auth == null || auth.getName() == null)
             return "unauthorized";
-        }
 
         Optional<User> optionalUser = userService.findByEmail(auth.getName());
-        if (optionalUser.isEmpty()) {
+        if (optionalUser.isEmpty())
             return "unauthorized";
-        }
 
         User user = optionalUser.get();
 
         Optional<Estacion> optionalEstacion = estacionRepository.findById(estacionId);
-        if (optionalEstacion.isEmpty()) {
+        if (optionalEstacion.isEmpty())
             return "not_found";
-        }
 
         Estacion estacion = optionalEstacion.get();
 
-        // ✅ Marcar o desmarcar
+        // 🔹 Usar los NOMBRES EXACTOS igual que en el ServiceImpl
         if (obtenido) {
             usuarioEstacionService.marcarObtenido(user, estacion);
         } else {
@@ -100,4 +91,3 @@ public class ProgresoEstacionController {
         return "ok";
     }
 }
-

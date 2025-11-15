@@ -2,6 +2,8 @@ package usco.edu.co.CatSoup.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Data
@@ -13,4 +15,7 @@ public class Role {
     private Long id;
 
     private String name;
+
+    @OneToMany(mappedBy = "role")
+    private Set<User> users = new HashSet<>();
 }

@@ -51,10 +51,10 @@ public class UsuarioEstacionServiceImpl implements UsuarioEstacionService {
                 .orElse(null);
 
         if (ue != null) {
-            ue.setObtenido(false);
-            return usuarioEstacionRepository.save(ue);
+            usuarioEstacionRepository.delete(ue);  // ✅ LO ELIMINAMOS COMPLETAMENTE
         }
 
         return null;
     }
+
 }

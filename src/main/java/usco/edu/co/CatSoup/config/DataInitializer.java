@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 import usco.edu.co.CatSoup.model.*;
 import usco.edu.co.CatSoup.repository.*;
 
-import java.util.Set;
-
 @Component
 @RequiredArgsConstructor
 public class DataInitializer {
@@ -40,10 +38,13 @@ public class DataInitializer {
 
         System.out.println("✅ Roles verificados/creados");
 
-
-        // ✅ Obtener roles ya existentes
+        // ✅ Obtener roles existentes
         Role roleAdmin = roleRepository.findByName("ROLE_ADMIN");
         Role roleUser = roleRepository.findByName("ROLE_USER");
+
+        // ⚠️ Importante: limpiar roles antiguos si venías del ManyToMany
+        // EXECUTA EN SQL SI AÚN TIENES user_roles:
+        // DROP TABLE user_roles;
 
 
         // ✅ Crear Usuario Admin
@@ -53,28 +54,26 @@ public class DataInitializer {
             admin.setUsername("Administrador");
             admin.setEmail("admin@gmail.com");
             admin.setPassword(passwordEncoder.encode("1234"));
-            admin.setRoles(Set.of(roleAdmin));
+            admin.setRole(roleAdmin); // ✔️ SOLO UN ROL
 
             userRepository.save(admin);
 
             System.out.println("✅ Admin creado (admin@gmail.com / 1234)");
         }
 
-
-        // ✅ Crear Usuario normal
+        // ✅ Crear Usuario Normal
         if (userRepository.findByEmail("user@gmail.com").isEmpty()) {
 
             User user = new User();
             user.setUsername("Usuario Normal");
             user.setEmail("user@gmail.com");
             user.setPassword(passwordEncoder.encode("1234"));
-            user.setRoles(Set.of(roleUser));
+            user.setRole(roleUser); // ✔️ SOLO UN ROL
 
             userRepository.save(user);
 
             System.out.println("✅ Usuario creado (user@gmail.com / 1234)");
         }
-
 
         // ✅ Crear 1 Gato
         if (gatoRepository.findAll().isEmpty()) {
@@ -89,20 +88,18 @@ public class DataInitializer {
             System.out.println("✅ Gato inicial creado");
         }
 
-
         // ✅ Crear 1 Vestuario
         if (vestuarioRepository.findAll().isEmpty()) {
 
             Vestuario v = new Vestuario();
             v.setNombre("Sombrero de Cocinero");
-            v.setTipo("Cabeza");
+            v.setDescripcion("Cabeza");
             v.setImagen("https://example.com/sombrero.jpg");
 
             vestuarioRepository.save(v);
 
             System.out.println("✅ Vestuario inicial creado");
         }
-
 
         // ✅ Crear 1 Estación
         if (estacionRepository.findAll().isEmpty()) {
@@ -116,6 +113,11 @@ public class DataInitializer {
 
             System.out.println("✅ Estación inicial creada");
         }
-
     }
 }
+
+
+
+
+
+

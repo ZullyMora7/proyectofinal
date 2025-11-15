@@ -2,36 +2,26 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Mi Vestuario 👗🐱</title>
-
+    <title>Vestuario</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-        .form-switch .form-check-input:checked {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
-        .form-switch .form-check-input {
-            cursor: pointer;
-        }
-        .list-group-item {
-            transition: background-color 0.3s ease;
-        }
-        .list-group-item:hover {
-            background-color: #f8f9fa;
-        }
-    </style>
 
     <script>
-        function toggleVestuario(id, check) {
-            const val = check.checked;
+        function toggleVestuario(vestuarioId, checkbox) {
+            const obtenido = checkbox.checked;
+
             fetch("/user/progreso/vestuario/toggle", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: "vestuarioId=" + id + "&obtenido=" + val
-            }).then(res => {
-                if (!res.ok) alert("Error al actualizar el progreso 😿");
-            });
+                body: "vestuarioId=" + vestuarioId + "&obtenido=" + obtenido
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error("Error al actualizar el estado del vestuario");
+                }
+            })
+            .catch(err => console.error("Error:", err));
         }
     </script>
 </head>
@@ -39,34 +29,108 @@
 <body class="bg-light">
 <div th:replace="fragments/navbar :: navbarUsuario"></div>
 
-<div class="container mt-5">
+<div class="container mt-4">
+
     <div class="text-center mb-4">
-        <h2 class="fw-bold">Mi Vestuario 👗🐱</h2>
-        <p class="text-muted">Marca los atuendos que ya has conseguido.</p>
+        <h2 class="fw-bold">Mi Vestuario 👗</h2>
+        <p class="text-muted">Activa el switch cuando hayas conseguido un atuendo.</p>
     </div>
 
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="list-group list-group-flush">
+
                 <div th:each="v : ${vestuarios}" class="list-group-item d-flex justify-content-between align-items-center">
+                    
+                    <!-- INFO DEL VESTUARIO -->
                     <div class="d-flex align-items-center">
                         <img th:if="${v.imagen != null}" th:src="@{${v.imagen}}"
-                             class="rounded me-3" style="width:50px; height:50px; object-fit:cover;">
-                        <strong th:text="${v.nombre}"></strong>
+                             class="rounded me-3" style="width:100px; height:100%; object-fit:cover;">
+                        <div>
+                            <strong th:text="${v.nombre}"></strong><br>
+                            <small class="descripcion-vestuario" th:text="${v.descripcion}"></small>
+                        </div>
                     </div>
 
+                    <!-- SWITCH -->
                     <div class="form-check form-switch">
                         <input class="form-check-input"
                                type="checkbox"
                                th:checked="${idsObtenidos != null and idsObtenidos.contains(v.id)}"
                                th:onchange="'toggleVestuario(' + ${v.id} + ', this)'">
                     </div>
+
+                    <!-- RESEÑA -->
+                    <div class="d-flex flex-column align-items-end">
+                        <form action="/resenas/agregar" method="post" class="mt-3 w-100">
+
+                            <input type="hidden" name="objetoId" th:value="${v.id}">
+                            <input type="hidden" name="tipoObjeto" value="vestuario">
+
+                            <!-- ⭐ CALIFICACIÓN ESTÉTICA DE CORAZONES ⭐ -->
+                            <div class="rating mb-2">
+
+                                <input type="radio" id="c5_${v.id}" name="calificacion_${v.id}" value="5" checked>
+                                <label for="c5_${v.id}">❤️</label>
+
+                                <input type="radio" id="c4_${v.id}" name="calificacion_${v.id}" value="4">
+                                <label for="c4_${v.id}">❤️</label>
+
+                                <input type="radio" id="c3_${v.id}" name="calificacion_${v.id}" value="3">
+                                <label for="c3_${v.id}">❤️</label>
+
+                                <input type="radio" id="c2_${v.id}" name="calificacion_${v.id}" value="2">
+                                <label for="c2_${v.id}">❤️</label>
+
+                                <input type="radio" id="c1_${v.id}" name="calificacion_${v.id}" value="1">
+                                <label for="c1_${v.id}">❤️</label>
+
+                                <!-- 🔥 Hidden que realmente se envía (igual al de gatos) -->
+                                <input type="hidden" name="calificacion" value="5">
+                            </div>
+
+                            <textarea name="comentario" class="form-control"></textarea>
+
+                            <div class="d-flex justify-content-end mt-2">
+                                <button class="btn-rosa">Enviar reseña</button>
+                                <a th:href="@{'/resenas/ver/vestuario/' + ${v.id}}" class="btn-rosaclaro">Ver reseñas</a>
+                            </div>
+
+                        </form>
+                    </div>
+
                 </div>
+
             </div>
         </div>
     </div>
+
 </div>
+
+<!-- ⭐ SCRIPT QUE ACTUALIZA EL VALOR REAL DE calificacion (idéntico al de gatos) ⭐ -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.rating').forEach(ratingBlock => {
+        const radios = Array.from(ratingBlock.querySelectorAll('input[type="radio"]'));
+        const hidden = ratingBlock.querySelector('input[type="hidden"][name="calificacion"]');
+
+        if (!hidden || radios.length === 0) return;
+
+        const checked = radios.find(r => r.checked);
+        hidden.value = checked ? checked.value : radios[0].value;
+
+        radios.forEach(r =>
+            r.addEventListener('change', (ev) => {
+                if (ev.target.checked) {
+                    hidden.value = ev.target.value;
+                }
+            })
+        );
+    });
+});
+</script>
 
 </body>
 </html>
+
 

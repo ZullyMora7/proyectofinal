@@ -14,3 +14,5 @@ public interface UsuarioEstacionService {
 
     UsuarioEstacion desmarcarObtenido(User user, Estacion estacion);
 }
+
+

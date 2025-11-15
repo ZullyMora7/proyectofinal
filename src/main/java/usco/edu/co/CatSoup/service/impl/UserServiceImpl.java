@@ -11,7 +11,6 @@ import usco.edu.co.CatSoup.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +35,8 @@ public class UserServiceImpl implements UserService {
             roleRepository.save(userRole);
         }
 
-        user.setRoles(Set.of(userRole));
+        // 🔥 CORRECCIÓN AQUÍ — SOLO UN ROL
+        user.setRole(userRole);
 
         return userRepository.save(user);
     }
