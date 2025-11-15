@@ -1,5 +1,10 @@
 @charset "UTF-8";
 
+body {
+    background-color: #fffafd /* Rosa claro suave */
+}
+
+
 /* 🌸 Estilo para botones rosados */
 .btn-rosa {
     background-color: #ff69b4; /* Rosa fuerte */
@@ -240,5 +245,22 @@
 .btn-salir-delicado:active {
     transform: scale(0.97);
     background: #ffcee4;
+}
+
+.icon-rosa {
+    color: #f48cab;
+}
+
+.centrar {
+    display: flex;
+    flex-direction: column; /* Para que el contenido se apile verticalmente */
+    justify-content: center; /* Centra verticalmente */
+    align-items: center;      /* Centra horizontalmente */
+    text-align: center;       /* Opcional: centra el texto */
+    height: 100%;             /* Asegura que tome todo el alto disponible */
+}
+
+.text-rosita {
+    color: #f48cab;
 }
 

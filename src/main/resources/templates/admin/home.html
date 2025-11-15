@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Inicio Admin</title>
-
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Bootstrap Icons -->
@@ -23,28 +23,34 @@
 
         <div class="col-md-4">
             <div class="card shadow-sm p-3 text-center h-100">
-                <i class="bi bi-gear-fill fs-1"></i>
+              <div class="centrar">
+                <i class="bi bi-gear-fill fs-1 icon-rosa"></i>
                 <h5 class="mt-2">Administrar Gatos</h5>
                 <p>Añade, edita o elimina gatos.</p>
-                <a href="/admin/gatos" class="btn btn-primary">Gestionar</a>
+                <a href="/admin/gatos" class="btn-rosa">Gestionar</a>
+              </div>
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="card shadow-sm p-3 text-center h-100">
-                <i class="bi bi-shirt fs-1"></i>
+              <div class="centrar">
+                <i class="bi bi-cart-fill fs-1 icon-rosa"></i>
                 <h5 class="mt-2">Administrar Vestuario</h5>
                 <p>Gestiona las prendas del juego.</p>
-                <a href="/admin/vestuario" class="btn btn-primary">Gestionar</a>
+                <a href="/admin/vestuario" class="btn-rosa">Gestionar</a>
+              </div>
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="card shadow-sm p-3 text-center h-100">
-                <i class="bi bi-house-fill fs-1"></i>
+              <div class="centrar">
+                <i class="bi bi-house-fill fs-1 icon-rosa"></i>
                 <h5 class="mt-2">Administrar Estaciones</h5>
                 <p>Controla las estaciones del juego.</p>
-                <a href="/admin/estaciones" class="btn btn-primary">Gestionar</a>
+                <a href="/admin/estaciones" class="btn-rosa">Gestionar</a>
+              </div>
             </div>
         </div>
 
@@ -55,21 +61,26 @@
 
         <div class="col-md-6">
             <div class="card shadow-sm p-3 text-center h-100">
-                <i class="bi bi-newspaper fs-1"></i>
+              <div class="centrar">
+                <i class="bi bi-newspaper fs-1 icon-rosa"></i>
                 <h5 class="mt-2">Publicaciones</h5>
                 <p>Revisa y elimina publicaciones de cualquier usuario.</p>
-                <a href="/admin/publicaciones" class="btn btn-warning">Ir a Publicaciones</a>
+                <a href="/admin/publicaciones" class="btn-rosa">Ir a Publicaciones</a>
+              </div>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="card shadow-sm p-3 text-center h-100">
-                <i class="bi bi-people-fill fs-1"></i>
-                <h5 class="mt-2">Usuarios</h5>
-                <p>Gestión de usuarios (Próximamente).</p>
-                <a class="btn btn-secondary disabled">Pronto</a>
-            </div>
-        </div>
+<div class="col-md-6">
+    <div class="card shadow-sm p-3 text-center h-100">
+      <div class="centrar">
+        <i class="bi bi-people-fill fs-1 icon-rosa"></i>
+        <h5 class="mt-2">Usuarios</h5>
+        <p>Gestión de usuarios</p>
+        <a th:href="@{/admin/users}" class="btn-rosa">Administrar</a>
+       </div>
+    </div>
+</div>
+
 
     </div>
 

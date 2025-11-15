@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Registrarse - CatSoup</title>
-
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
-<body class="bg-light">
+<body>
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -40,6 +41,15 @@
         </div>
     </div>
 </div>
+
+<div th:if="${error}" class="alert alert-danger">
+    <p th:text="${error}"></p>
+</div>
+
+<div th:if="${success}" class="alert alert-success">
+    <p th:text="${success}"></p>
+</div>
+
 
 </body>
 </html>

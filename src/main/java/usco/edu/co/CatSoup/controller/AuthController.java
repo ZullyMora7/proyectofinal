@@ -8,10 +8,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import usco.edu.co.CatSoup.model.User;
+import usco.edu.co.CatSoup.service.UserService;
 
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
+
+    private final UserService userService;
 
     @GetMapping("/")
     public String root() {
@@ -26,6 +33,29 @@ public class AuthController {
     @GetMapping("/register")
     public String register() {
         return "register";
+    }
+
+    // ✅ POST /register corregido — con validación
+    @PostMapping("/register")
+    public String processRegister(@ModelAttribute User user, RedirectAttributes redirect) {
+
+        try {
+            userService.registerUser(user);
+            redirect.addFlashAttribute("success", "Usuario registrado exitosamente");
+            return "redirect:/login";
+
+        } catch (IllegalArgumentException e) {
+
+            if (e.getMessage().equals("EMAIL_EXISTS")) {
+                redirect.addFlashAttribute("error", "El correo ya existe");
+            }
+
+            if (e.getMessage().equals("USERNAME_EXISTS")) {
+                redirect.addFlashAttribute("error", "El username ya existe");
+            }
+
+            return "redirect:/register";
+        }
     }
 
     @GetMapping("/redirect")

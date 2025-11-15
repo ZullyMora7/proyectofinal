@@ -1,44 +1,27 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <title>Crear Publicación 🐾</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .card {
-            border-radius: 1rem;
-        }
-
-        .btn-primary {
-            background-color: #ff7b54;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background-color: #ff9559;
-        }
-
-        .form-label {
-            font-weight: 600;
-        }
-
-        .preview-img {
-            width: 100%;
-            border-radius: 0.5rem;
-            margin-top: 10px;
-            display: none;
-        }
+        body { background-color: #f8f9fa; }
+        .card { border-radius: 1rem; }
+        .btn-primary { background-color: #ff7b54; border: none; }
+        .btn-primary:hover { background-color: #ff9559; }
+        .form-label { font-weight: 600; }
+        .preview-img { width: 100%; border-radius: 0.5rem; margin-top: 10px; display: none; }
     </style>
 </head>
 
 <body>
-<!-- Navbar -->
-<div th:replace="fragments/navbar :: navbarUsuario"></div>
+<!-- Navbar dinámico -->
+<div sec:authorize="hasRole('ROLE_ADMIN')" th:replace="fragments/navbar :: navbarAdmin"></div>
+<div sec:authorize="hasRole('ROLE_USER')" th:replace="fragments/navbar :: navbarUsuario"></div>
 
 <div class="container mt-5">
     <div class="card shadow p-4">

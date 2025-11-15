@@ -16,4 +16,11 @@ public interface UserService {
     List<User> findAll();
 
     void save(User user);
+    
+    void deleteById(Long id);
+
+    void updateUser(User user);
+
+    // 🔧 NUEVO: Permite buscar un usuario por ID
+    Optional<User> findById(Long id);
 }

@@ -23,20 +23,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(User user) {
 
-        // Encriptar la contraseña
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // Asignar rol por defecto USER
-        Role userRole = roleRepository.findByName("ROLE_USER");
-
-        if (userRole == null) {
-            userRole = new Role();
-            userRole.setName("ROLE_USER");
-            roleRepository.save(userRole);
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("EMAIL_EXISTS");
         }
 
-        // 🔥 CORRECCIÓN AQUÍ — SOLO UN ROL
-        user.setRole(userRole);
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("USERNAME_EXISTS");
+        }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        if (user.getRole() == null) {
+            Role userRole = roleRepository.findByName("ROLE_USER");
+            if (userRole == null) {
+                userRole = new Role();
+                userRole.setName("ROLE_USER");
+                roleRepository.save(userRole);
+            }
+            user.setRole(userRole);
+        }
 
         return userRepository.save(user);
     }
@@ -60,5 +65,43 @@ public class UserServiceImpl implements UserService {
     public void save(User user) {
         userRepository.save(user);
     }
+    
+    @Override
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public void updateUser(User user) {
+        Optional<User> existingUserOpt = userRepository.findById(user.getId());
+
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+
+            if (!existingUser.getEmail().equals(user.getEmail())) {
+                if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+                    throw new IllegalArgumentException("EMAIL_EXISTS");
+                }
+            }
+
+            if (!existingUser.getUsername().equals(user.getUsername())) {
+                if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+                    throw new IllegalArgumentException("USERNAME_EXISTS");
+                }
+            }
+
+            user.setPassword(existingUser.getPassword());
+
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+    }
 }
+
 
