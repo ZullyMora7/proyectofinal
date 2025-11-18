@@ -38,7 +38,7 @@ public class AdminUserController {
     }
 
     // ============================================================
-    // GUARDAR USUARIO
+    // GUARDAR USUARIO NUEVO
     // ============================================================
     @PostMapping("/save")
     public String saveUser(@ModelAttribute User user,
@@ -49,7 +49,7 @@ public class AdminUserController {
             Role role = roleRepository.findById(roleId)
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
-            user.setRole(role);
+            user.setRole(role); // ← CORRECTO: asignamos rol antes de guardar
 
             userService.registerUser(user);
 
@@ -65,7 +65,6 @@ public class AdminUserController {
 
             model.addAttribute("user", user);
             model.addAttribute("roles", roleRepository.findAll());
-
             return "admin/users/new-user";
         }
 
@@ -99,9 +98,9 @@ public class AdminUserController {
             Role role = roleRepository.findById(roleId)
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
-            user.setRole(role);
+            user.setRole(role); // ← CORRECTO: este era el problema
 
-            userService.updateUser(user);
+            userService.updateUser(user); // ← Sobrescribe en BD
 
         } catch (IllegalArgumentException e) {
 
@@ -115,11 +114,8 @@ public class AdminUserController {
 
             model.addAttribute("user", user);
             model.addAttribute("roles", roleRepository.findAll());
-
             return "admin/users/edit-user";
         }
-
-        model.addAttribute("success", "Usuario actualizado correctamente ✔️");
 
         return "redirect:/admin/users?updated=true";
     }

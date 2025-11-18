@@ -21,7 +21,7 @@ public class CacheControllerFilter implements Filter {
         // 🚫 Bloquear caché completamente
         res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         res.setHeader("Pragma", "no-cache");
-        res.setHeader("Expires", "0");
+        res.setDateHeader("Expires", 0);
 
         HttpSession session = req.getSession(false);
 

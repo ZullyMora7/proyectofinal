@@ -22,48 +22,45 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                // ✅ Evita errores con formularios POST
+                // 🚫 Desactivamos CSRF
                 .csrf(csrf -> csrf.disable())
 
-                // ✅ AUTORIZACIÓN DE RUTAS
+                // 📌 AUTORIZACIÓN DE RUTAS
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ Rutas públicas
-                        .requestMatchers(
-                                "/", "/home", "/login", "/register", "/redirect",
+                        // Públicas
+                        .requestMatchers("/", "/home", "/login", "/register", "/redirect",
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()
-
-                        // ✅ Rutas protegidas
+                        // Admin
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-
-                        // 🔹 Permitir que tanto USER como ADMIN accedan a rutas de usuario
+                        // User y admin
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-
-                        // ✅ Todo lo demás requiere autenticación
+                        // Todo lo demás: requiere autenticación
                         .anyRequest().authenticated()
                 )
 
-                // ✅ LOGIN PERSONALIZADO
+                // 🔑 LOGIN
                 .formLogin(form -> form
                         .loginPage("/login")
-                        // Después del login, Spring va a /redirect para saber si eres admin o user
                         .defaultSuccessUrl("/redirect", true)
                         .permitAll()
                 )
 
-                // ✅ LOGOUT
+                // 🔧 LOGOUT
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 );
 
         return http.build();
     }
 
-    // ✅ AUTENTICACIÓN
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }
+

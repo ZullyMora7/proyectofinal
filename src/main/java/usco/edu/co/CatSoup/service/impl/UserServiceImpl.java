@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // ============================================================
-    // REGISTRO DE USUARIO NORMAL
+    // REGISTRO NORMAL (USUARIO NO ADMIN)
     // ============================================================
     @Override
     public User registerUser(User user) {
@@ -39,14 +39,16 @@ public class UserServiceImpl implements UserService {
         // Encriptar contraseña
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // Asignar rol por defecto
-        Role userRole = roleRepository.findByName("ROLE_USER");
-        if (userRole == null) {
-            userRole = new Role();
-            userRole.setName("ROLE_USER");
-            roleRepository.save(userRole);
+        // SOLO SI NO TIENE ROL → asigna ROLE_USER
+        if (user.getRole() == null) {
+            Role userRole = roleRepository.findByName("ROLE_USER");
+            if (userRole == null) {
+                userRole = new Role();
+                userRole.setName("ROLE_USER");
+                roleRepository.save(userRole);
+            }
+            user.setRole(userRole);
         }
-        user.setRole(userRole);
 
         return userRepository.save(user);
     }
@@ -75,13 +77,22 @@ public class UserServiceImpl implements UserService {
     }
 
     // ============================================================
-    // GUARDAR - USADO POR ADMIN AL CREAR
+    // GUARDAR (USADO POR ADMIN)
     // ============================================================
     @Override
     public void save(User user) {
 
-        if (user.getId() == null) {
-            // Crear usuario normal
+        // Validaciones
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("EMAIL_EXISTS");
+        }
+
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("USERNAME_EXISTS");
+        }
+
+        // Encriptar contraseña si viene normal
+        if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
@@ -97,39 +108,42 @@ public class UserServiceImpl implements UserService {
     }
 
     // ============================================================
-    // ACTUALIZAR USUARIO (PARA ADMIN)
+    // ACTUALIZAR USUARIO
     // ============================================================
     @Override
     public void updateUser(User user) {
-        Optional<User> existingUserOpt = userRepository.findById(user.getId());
 
-        if (existingUserOpt.isEmpty()) {
-            throw new RuntimeException("USER_NOT_FOUND");
+        User existingUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        // Validar email si cambia
+        if (!existingUser.getEmail().equals(user.getEmail()) &&
+                userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("EMAIL_EXISTS");
         }
 
-        User existingUser = existingUserOpt.get();
-
-        // VALIDAR EMAIL SI FUE MODIFICADO
-        if (!existingUser.getEmail().equals(user.getEmail())) {
-            if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-                throw new IllegalArgumentException("EMAIL_EXISTS");
-            }
+        // Validar username si cambia
+        if (!existingUser.getUsername().equals(user.getUsername()) &&
+                userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("USERNAME_EXISTS");
         }
 
-        // VALIDAR USERNAME SI FUE MODIFICADO
-        if (!existingUser.getUsername().equals(user.getUsername())) {
-            if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-                throw new IllegalArgumentException("USERNAME_EXISTS");
-            }
+        // Actualizar username y email
+        existingUser.setUsername(user.getUsername());
+        existingUser.setEmail(user.getEmail());
+
+        // Actualizar rol
+        existingUser.setRole(user.getRole());
+
+        // Si administrador cambia la contraseña
+        if (user.getPassword() != null && !user.getPassword().isBlank()) {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
-        // Mantener contraseña actual si no se cambió
-        user.setPassword(existingUser.getPassword());
-
-        // Guardar cambios
-        userRepository.save(user);
+        userRepository.save(existingUser);
     }
 }
+
 
 
 

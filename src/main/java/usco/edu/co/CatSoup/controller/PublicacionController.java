@@ -71,7 +71,6 @@ public class PublicacionController {
             p.setUser(user);
 
             if (imagen != null && !imagen.isEmpty()) {
-
                 File uploadDir = new File(UPLOAD_DIR);
                 if (!uploadDir.exists()) uploadDir.mkdirs();
 
@@ -83,7 +82,6 @@ public class PublicacionController {
             }
 
             publicacionService.save(p);
-
             return getRedirectByRole(auth);
         }
 
@@ -96,6 +94,50 @@ public class PublicacionController {
                 publicacionService.delete(id);
             }
             return getRedirectByRole(auth);
+        }
+
+        // 🔄 Nueva ruta: editar publicación
+        @GetMapping("/editar/{id}")
+        public String editar(@PathVariable Long id, Model model, Authentication auth) {
+            Publicacion p = publicacionService.findById(id);
+            User user = userService.findByEmail(auth.getName()).get();
+
+            if (p == null || !p.getUser().getId().equals(user.getId())) {
+                return "redirect:/user/publicaciones";
+            }
+
+            model.addAttribute("publicacion", p);
+            return "fragments/form-publicaciones";
+        }
+
+        @PostMapping("/editar")
+        public String actualizar(@ModelAttribute Publicacion publicacion,
+                                 @RequestParam("imagen") MultipartFile imagen,
+                                 Authentication auth) throws IOException {
+
+            User user = userService.findByEmail(auth.getName()).get();
+            Publicacion p = publicacionService.findById(publicacion.getId());
+
+            if (p == null || !p.getUser().getId().equals(user.getId())) {
+                return "redirect:/user/publicaciones";
+            }
+
+            p.setTitulo(publicacion.getTitulo());
+            p.setContenido(publicacion.getContenido());
+
+            if (!imagen.isEmpty()) {
+                File uploadDir = new File(UPLOAD_DIR);
+                if (!uploadDir.exists()) uploadDir.mkdirs();
+
+                String fileName = System.currentTimeMillis() + "_" + imagen.getOriginalFilename();
+                Path filePath = Paths.get(UPLOAD_DIR + fileName);
+                Files.write(filePath, imagen.getBytes());
+
+                p.setImagen("/uploads/publicaciones/" + fileName);
+            }
+
+            publicacionService.save(p);
+            return "redirect:/user/publicaciones";
         }
     }
 
@@ -111,13 +153,6 @@ public class PublicacionController {
         private final UserService userService;
 
         private static final String UPLOAD_DIR = "uploads/publicaciones/";
-
-        private String getRedirectByRole(Authentication auth) {
-            boolean isAdmin = auth.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-
-            return isAdmin ? "redirect:/admin/publicaciones" : "redirect:/user/publicaciones";
-        }
 
         @GetMapping
         public String listar(Model model) {
@@ -144,7 +179,6 @@ public class PublicacionController {
             p.setUser(user);
 
             if (imagen != null && !imagen.isEmpty()) {
-
                 File uploadDir = new File(UPLOAD_DIR);
                 if (!uploadDir.exists()) uploadDir.mkdirs();
 
@@ -156,14 +190,54 @@ public class PublicacionController {
             }
 
             publicacionService.save(p);
-
-            return getRedirectByRole(auth);
+            return "redirect:/admin/publicaciones";
         }
 
         @GetMapping("/eliminar/{id}")
-        public String eliminar(@PathVariable Long id, Authentication auth) {
+        public String eliminar(@PathVariable Long id) {
             publicacionService.delete(id);
-            return getRedirectByRole(auth);
+            return "redirect:/admin/publicaciones";
+        }
+
+        // 🔄 Nueva ruta: editar publicación como admin
+        @GetMapping("/editar/{id}")
+        public String editar(@PathVariable Long id, Model model) {
+            Publicacion p = publicacionService.findById(id);
+
+            if (p == null) {
+                return "redirect:/admin/publicaciones";
+            }
+
+            model.addAttribute("publicacion", p);
+            return "fragments/form-publicaciones";
+        }
+
+        @PostMapping("/editar")
+        public String actualizar(@ModelAttribute Publicacion publicacion,
+                                 @RequestParam("imagen") MultipartFile imagen) throws IOException {
+
+            Publicacion p = publicacionService.findById(publicacion.getId());
+
+            if (p == null) {
+                return "redirect:/admin/publicaciones";
+            }
+
+            p.setTitulo(publicacion.getTitulo());
+            p.setContenido(publicacion.getContenido());
+
+            if (!imagen.isEmpty()) {
+                File uploadDir = new File(UPLOAD_DIR);
+                if (!uploadDir.exists()) uploadDir.mkdirs();
+
+                String fileName = System.currentTimeMillis() + "_" + imagen.getOriginalFilename();
+                Path filePath = Paths.get(UPLOAD_DIR + fileName);
+                Files.write(filePath, imagen.getBytes());
+
+                p.setImagen("/uploads/publicaciones/" + fileName);
+            }
+
+            publicacionService.save(p);
+            return "redirect:/admin/publicaciones";
         }
     }
 }
