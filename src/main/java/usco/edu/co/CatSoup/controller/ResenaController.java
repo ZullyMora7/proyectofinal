@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 import usco.edu.co.CatSoup.model.Resena;
 import usco.edu.co.CatSoup.model.User;
-import usco.edu.co.CatSoup.model.Vestuario;   // ✅ IMPORTANTE
+import usco.edu.co.CatSoup.model.Vestuario;
 import usco.edu.co.CatSoup.service.ResenaService;
 import usco.edu.co.CatSoup.service.UserService;
 import usco.edu.co.CatSoup.service.GatoService;
 import usco.edu.co.CatSoup.service.EstacionService;
-import usco.edu.co.CatSoup.service.VestuarioService; // ✅ IMPORTANTE
+import usco.edu.co.CatSoup.service.VestuarioService;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,14 +24,15 @@ public class ResenaController {
     private final UserService userService;
     private final GatoService gatoService;
     private final EstacionService estacionService;
-    private final VestuarioService vestuarioService; // ✅ AGREGADO
+    private final VestuarioService vestuarioService;
 
     @PostMapping("/agregar")
-    public String agregarResena(@RequestParam int calificacion,
-                                @RequestParam String comentario,
-                                @RequestParam Long objetoId,
-                                @RequestParam String tipoObjeto,
-                                Authentication auth) {
+    public String agregarResena(
+            @RequestParam(name = "calificacion") int calificacion,
+            @RequestParam(name = "comentario") String comentario,
+            @RequestParam(name = "objetoId") Long objetoId,
+            @RequestParam(name = "tipoObjeto") String tipoObjeto,
+            Authentication auth) {
 
         User user = userService.findByEmail(auth.getName()).get();
 
@@ -58,7 +59,7 @@ public class ResenaController {
         var gato = gatoService.findById(id);
 
         model.addAttribute("resenas", resenaService.getResenas("gato", id));
-        model.addAttribute("titulo", "Reseñas del gato " + gato.getNombre());
+        model.addAttribute("titulo", "Reseñas del gato \"" + gato.getNombre() +"\"");
 
         return "resenas/listar";
     }
@@ -69,7 +70,7 @@ public class ResenaController {
         var estacion = estacionService.findById(id);
 
         model.addAttribute("resenas", resenaService.getResenas("estacion", id));
-        model.addAttribute("titulo", "Reseñas de la estación " + estacion.getNombre());
+        model.addAttribute("titulo", "Reseñas de la estación de cocina \"" + estacion.getNombre() + "\"");
 
         return "resenas/listar";
     }
@@ -77,14 +78,14 @@ public class ResenaController {
     @GetMapping("/ver/vestuario/{id}")
     public String verResenasVestuario(@PathVariable Long id, Model model) {
 
-        Vestuario vestuario = vestuarioService.findById(id); // ✅ CORRECTO
+        Vestuario vestuario = vestuarioService.findById(id);
         model.addAttribute("vestuario", vestuario);
 
         model.addAttribute("resenas",
-                resenaService.getResenas("vestuario", id)); // ✅ REUTILIZA MISMO MÉTODO
+                resenaService.getResenas("vestuario", id));
 
         model.addAttribute("titulo",
-                "Reseñas del vestuario " + vestuario.getNombre());
+                "Reseñas del vestuario \"" + vestuario.getNombre() + "\"");
 
         return "resenas/listar";
     }
@@ -108,5 +109,3 @@ public class ResenaController {
     }
 
 }
-
-

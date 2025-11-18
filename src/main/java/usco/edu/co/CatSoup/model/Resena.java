@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "resenas")
 @Getter
@@ -25,4 +27,8 @@ public class Resena {
 
     private Long objetoId; // ID del gato/estación/vestuario
     private String tipoObjeto; // "gato", "estacion", "vestuario"
+
+    // ✅ AGREGADO — SIN MOVER NADA MÁS
+    @Column(nullable = false)
+    private LocalDateTime fecha = LocalDateTime.now();
 }

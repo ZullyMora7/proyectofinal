@@ -34,6 +34,11 @@
                 Usuario: <span th:text="${r.usuario.username}"></span>
             </small>
 
+            <!-- FECHA (única línea agregada) -->
+            <small class="text-muted d-block">
+                <span th:text="${#temporals.format(r.fecha, 'dd/MM/yyyy HH:mm')}"></span>
+            </small>
+
             <!-- ✅ BOTÓN ELIMINAR (solo dueño o admin) -->
             <div class="mt-2">
                 <a th:if="${#authentication.name == r.usuario.email

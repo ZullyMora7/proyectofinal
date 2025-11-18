@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -16,35 +15,46 @@
 
 <div class="container mt-4">
 
-    <h2 class="mb-4">Bienvenido Usuario 👤</h2>
-
+   <div class="text-center mb-4">
+    <h2 class="mb-4">Bienvenido Usuario</h2>
+   </div>	 
+    
+    <img th:src="@{/uploads/gatos/banner.webp}" alt="Banner" class="banner-img">
+    
+<br><br>
     <!-- ✅ TARJETAS PRINCIPALES -->
     <div class="row g-4">
 
         <div class="col-md-4">
             <div class="card shadow-sm p-3 text-center h-100">
+              <div class="centrar">
                 <i class="bi bi-newspaper fs-1 icon-rosa"></i>
                 <h5 class="mt-2">Publicaciones</h5>
                 <p>Comparte información y mira lo que otros publican.</p>
-                <a href="/user/publicaciones" class="btn btn-primary">Ir a Publicaciones</a>
+                <a href="/user/publicaciones"  class="btn-rosa">Ir a Publicaciones</a>
+              </div>
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="card shadow-sm p-3 text-center h-100">
+              <div class="centrar">
                 <i class="bi bi-graph-up-arrow fs-1 icon-rosa"></i>
                 <h5 class="mt-2">Progreso</h5>
                 <p>Revisa los gatos, vestuario y estaciones que has conseguido.</p>
-                <a href="/user/progreso" class="btn btn-success">Ver Progreso</a>
+                <a href="/user/progreso"  class="btn-rosa">Ver Progreso</a>
+              </div>
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="card shadow-sm p-3 text-center h-100">
+              <div class="centrar">
                 <i class="bi bi-person-circle fs-1 icon-rosa"></i>
                 <h5 class="mt-2">Mi Perfil</h5>
                 <p>Configura tus datos personales.</p>
-                <a href="#" class="btn btn-secondary disabled">Pronto</a>
+                <a href="/user/perfil"  class="btn-rosa">Editar Perfil</a>
+               </div>
             </div>
         </div>
 
@@ -53,18 +63,10 @@
     <!-- ✅ ESPACIO -->
     <div class="my-5"></div>
 
-    <!-- ✅ SECCIÓN DE ÚLTIMAS PUBLICACIONES -->
-    <h3 class="mb-3">Últimas Publicaciones</h3>
 
-    <div class="list-group">
-        <div th:each="p : ${posts}" class="list-group-item">
-            <h5 th:text="${p.titulo}"></h5>
-            <small class="text-muted" th:text="'Por ' + ${p.user.username}"></small>
-            <p class="mt-2" th:text="${p.contenido}"></p>
-        </div>
-    </div>
 
 </div>
 
 </body>
 </html>
+

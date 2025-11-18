@@ -30,19 +30,34 @@
         <p>No hay publicaciones todavía 😿</p>
     </div>
 
-    <!-- Listado de publicaciones (tipo red social) -->
+    <!-- Lista tipo red social -->
     <div th:each="pub : ${publicaciones}" class="card mb-4 shadow-sm">
         <div class="card-body">
+
+            <!-- Header -->
             <div class="d-flex align-items-center mb-2">
                 <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png"
                      alt="user" width="40" class="rounded-circle me-2">
-                <strong th:text="${pub.user.username}">Usuario</strong>
+
+                <div>
+                    <strong th:text="${pub.user.username}">Usuario</strong><br>
+
+                    <!-- FECHA -->
+                    <small class="text-muted"
+                           th:text="${#temporals.format(pub.fecha, 'dd/MM/yyyy HH:mm')}"></small>
+                </div>
             </div>
+            <!-- Imagen -->
+<div th:if="${pub.imagen}" class="text-center mt-3">
+    <img th:src="${pub.imagen}" class="img-fluid rounded" style="max-height: 300px;">
+</div>
 
             <h5 th:text="${pub.titulo}" class="card-title"></h5>
             <p th:text="${pub.contenido}" class="card-text"></p>
 
-            <!-- Solo muestra el botón eliminar si es el autor -->
+
+
+            <!-- Eliminar solo si es el dueño -->
             <a th:if="${userId == pub.user.id}"
                th:href="@{'/user/publicaciones/eliminar/' + ${pub.id}}"
                class="btn-rosaclaro">
@@ -55,4 +70,5 @@
 
 </body>
 </html>
+
 

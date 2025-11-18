@@ -124,11 +124,15 @@ body {
     white-space: pre;
 }
 
+
+
         /* ✅ SWITCH igual que en gatos */
         .form-switch .form-check-input {
             cursor: pointer;
             background-color: #f8b6d2;
             border-color: #f8b6d2;
+            height: 30px;
+            width: 50px;
         }
 
         .form-switch .form-check-input:checked {
@@ -263,4 +267,31 @@ body {
 .text-rosita {
     color: #f48cab;
 }
+
+.banner-img {
+    width: 100%;
+    height: 420px;            /* Puedes cambiar el alto del banner */
+    object-fit: cover;        /* Hace que la imagen se recorte y se adapte */
+    object-position: center;  /* Centra la imagen */
+    border-radius: 10px;      /* Opcional */
+}
+
+
+
+
+
+.fila {
+  display: flex;
+  align-items: center; /* centra verticalmente */
+  gap: 20px; /* espacio entre imagen, texto y switch */
+}
+
+.fila img {
+  width: 80px; /* tamaño uniforme */
+}
+
+.texto {
+  flex: 1; /* ocupa el espacio disponible */
+}
+
 

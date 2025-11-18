@@ -43,26 +43,30 @@
                          alt="user" width="40" class="rounded-circle me-2">
                     <div>
                         <strong th:text="${pub.user.username}">Usuario</strong><br>
-                        <small class="text-muted" th:text="${pub.fecha}">2025-11-08</small>
+
+                        <!-- FECHA -->
+                        <small class="text-muted"
+                               th:text="${#temporals.format(pub.fecha, 'dd/MM/yyyy HH:mm')}"></small>
                     </div>
                 </div>
 
-                <!-- Botón eliminar (el admin puede eliminar todos) -->
+                <!-- Botón eliminar -->
                 <a th:href="@{'/admin/publicaciones/eliminar/' + ${pub.id}}"
                    class="btn btn-sm btn-danger"
                    onclick="return confirm('¿Estás seguro de eliminar esta publicación?');">
                     🗑️ Eliminar
                 </a>
             </div>
+            <!-- Imagen -->
+<div th:if="${pub.imagen}" class="text-center mt-3">
+    <img th:src="${pub.imagen}" class="img-fluid rounded" style="max-height: 300px;">
+</div>
 
-            <!-- Contenido de la publicación -->
+            <!-- Contenido -->
             <h5 th:text="${pub.titulo}" class="card-title mt-2"></h5>
             <p th:text="${pub.contenido}" class="card-text"></p>
 
-            <!-- Imagen opcional -->
-            <div th:if="${pub.imagen}" class="text-center mt-3">
-                <img th:src="@{${pub.imagen}}" class="img-fluid rounded" style="max-height: 300px;">
-            </div>
+
         </div>
     </div>
 
@@ -70,3 +74,6 @@
 
 </body>
 </html>
+
+
+

@@ -19,18 +19,41 @@
           method="post"
           enctype="multipart/form-data">
 
+        <!-- NOMBRE -->
         <label class="form-label">Nombre</label>
         <input type="text" class="form-control mb-3" th:field="*{nombre}" required>
 
+        <!-- ❗ Mensaje de error del nombre -->
+        <div class="text-danger"
+             th:if="${#fields.hasErrors('nombre')}"
+             th:errors="*{nombre}">
+        </div>
+
+        <!-- DESCRIPCIÓN -->
         <label class="form-label">Descripción</label>
-        <input type="text" class="form-control mb-3" th:field="*{descripcion}" required>
+        <textarea class="form-control mb-3" th:field="*{descripcion}" required></textarea>
 
+        <!-- ❗ Mensaje de error de la descripción -->
+        <div class="text-danger"
+             th:if="${#fields.hasErrors('descripcion')}"
+             th:errors="*{descripcion}">
+        </div>
+
+        <!-- IMAGEN -->
         <label class="form-label">Imagen</label>
-        <input type="file" name="imagenArchivo" accept="image/*" class="form-control mb-3">
+        <input type="file" name="imagenArchivo" accept="image/*" class="form-control mb-3"required>
 
-        <button class="btn btn-primary">Guardar</button>
+        <!-- ❗ Errores generales (nombre repetido, imagen repetida) -->
+        <div th:if="${error}" class="text-danger mb-3" th:text="${error}"></div>
+
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary">Guardar</button>
+            <a th:href="@{/admin/vestuario}" class="btn btn-secondary">Cancelar</a>
+        </div>
     </form>
 </div>
 
 </body>
 </html>
+

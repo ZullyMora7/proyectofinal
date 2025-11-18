@@ -6,7 +6,6 @@
     <title>Estaciones - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-
 </head>
 
 <body>
@@ -14,17 +13,18 @@
 
 <div class="container mt-4">
 
-    <h2 class="mb-3">Administrar Estaciones 🏡🐱</h2>
+    <h2 class="mb-3">Administrar Estaciones de Cocina 🏡🐱</h2>
 
-    <a th:href="@{/admin/estaciones/crear}" class="btn btn-primary mb-3">Añadir Estación</a>
+    <a th:href="@{/admin/estaciones/crear}" class="btn-rosa">Añadir Estación</a>
+    <br><br>
 
-    <table class="table table-bordered table-striped align-middle text-center">
-        <thead class="table-light">
+    <table class="table table-bordered table-striped align-middle">
+        <thead>
         <tr>
             <th>Nombre</th>
             <th>Descripción</th>
             <th>Imagen</th>
-            <th>Acciones</th>
+            <th style="width: 180px;">Acciones</th>
         </tr>
         </thead>
 
@@ -33,17 +33,25 @@
             <td th:text="${e.nombre}"></td>
             <td th:text="${e.descripcion}"></td>
 
-            <!-- ✅ Mostrar imagen correctamente -->
-            <td>
-                <img th:if="${e.imagen != null}" th:src="@{${e.imagen}}"
+            <!-- Imagen con mismas dimensiones y estilo que en gatos -->
+            <td class="text-center">
+                <img th:if="${e.imagen != null}"
+                     th:src="@{${e.imagen}}"
                      alt="Imagen de la estación"
-                     class="img-thumbnail"
-                     style="width: 120px; height: 120%; object-fit: cover; border-radius: 10px;">
+                     style="width: 200px; height: 100%; object-fit: cover; border-radius: 10px; box-shadow: 0 0 4px rgba(0,0,0,0.3);">
+
+                <span th:if="${e.imagen == null}" class="text-muted">Sin imagen</span>
             </td>
 
-            <td>
-                <a th:href="@{'/admin/estaciones/editar/' + ${e.id}}" class="btn btn-warning btn-sm">Editar</a>
-                <a th:href="@{'/admin/estaciones/eliminar/' + ${e.id}}" class="btn btn-danger btn-sm">Eliminar</a>
+            <!-- Acciones alineadas igual -->
+            <td class="alineado-horizontal">
+                <a th:href="@{'/admin/estaciones/editar/' + ${e.id}}" class="btn-rosa">Editar</a>
+                
+                <a th:href="@{'/admin/estaciones/eliminar/' + ${e.id}}" 
+                   class="btn-rosaclaro"
+                   onclick="return confirm('¿Estás seguro de eliminar esta estación?');">
+                   Eliminar
+                </a>
             </td>
         </tr>
         </tbody>

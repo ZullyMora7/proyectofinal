@@ -33,4 +33,14 @@ public class VestuarioServiceImpl implements VestuarioService {
     public void delete(Long id) {
         vestuarioRepository.deleteById(id);
     }
+
+    @Override
+    public boolean existeNombre(String nombre) {
+        return vestuarioRepository.existsByNombre(nombre);
+    }
+
+    @Override
+    public boolean existeImagen(String imagen) {
+        return vestuarioRepository.existsByImagen(imagen);
+    }
 }

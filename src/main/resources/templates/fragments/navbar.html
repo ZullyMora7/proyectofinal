@@ -12,9 +12,10 @@
 <nav th:if="${#authorization.expression('hasRole(''USER'')')}"
      th:fragment="navbarUsuario"
      class="navbar navbar-expand-lg navbar-light navbar-rosa mb-3">
-
+       <a href="/user/perfil" class="nav-link"><i class="bi bi-person-circle fs-1" ></i> </a>
     <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/user/home}">🐱 CatSoup</a>
+
+       <a class="navbar-brand" th:href="@{/user/home}"> CatSoup</a>
 
         <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse" data-bs-target="#navUser">

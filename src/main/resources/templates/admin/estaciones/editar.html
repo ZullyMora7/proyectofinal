@@ -3,35 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Editar Estación</title>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-
 </head>
 
 <body>
 <div th:replace="fragments/navbar :: navbarAdmin"></div>
 
 <div class="container mt-4">
-    <h2>Editar Estación</h2>
+    <h2>Editar Estación de Cocina</h2>
 
-    <!-- ✅ Añadimos enctype para permitir la subida de archivos -->
     <form th:action="@{'/admin/estaciones/actualizar/' + ${estacion.id}}"
           th:object="${estacion}"
           method="post"
           enctype="multipart/form-data">
 
+        <!-- NOMBRE -->
         <label class="form-label">Nombre</label>
         <input type="text" class="form-control mb-3" th:field="*{nombre}" required>
 
-        <label class="form-label">Descripción</label>
-        <textarea class="form-control mb-3" th:field="*{descripcion}"></textarea>
+        <!-- ❗ Mensaje de error del nombre -->
+        <div class="text-danger"
+             th:if="${#fields.hasErrors('nombre')}"
+             th:errors="*{nombre}">
+        </div>
 
-        <!-- ✅ Campo de imagen con botón para seleccionar archivo -->
+        <!-- DESCRIPCIÓN -->
+        <label class="form-label">Descripción</label>
+        <textarea class="form-control mb-3" th:field="*{descripcion}" required></textarea>
+
+
+        <!-- ❗ Mensaje de error de la descripción -->
+        <div class="text-danger"
+             th:if="${#fields.hasErrors('descripcion')}"
+             th:errors="*{descripcion}">
+        </div>
+
+        <!-- IMAGEN -->
         <label class="form-label">Imagen</label>
         <input type="file" name="imagenArchivo" accept="image/*" class="form-control mb-3">
 
-        <!-- ✅ Mostrar imagen actual si existe -->
+        <!-- Mostrar imagen actual -->
         <div th:if="${estacion.imagen != null}">
             <p class="text-muted mt-2">Imagen actual:</p>
             <img th:src="@{${estacion.imagen}}" alt="Imagen de la estación"
@@ -39,7 +52,14 @@
                  style="width: 150px; height: 150px; object-fit: cover;">
         </div>
 
-        <button class="btn btn-primary">Actualizar</button>
+        <!-- ERRORES GENERALES (nombre repetido, imagen repetida) -->
+        <div th:if="${error}" class="text-danger mb-3" th:text="${error}"></div>
+
+        
+        <div class="d-flex gap-2">
+            <button class="btn-rosa">Actualizar</button>
+            <a th:href="@{/admin/estaciones}" class="btn-rosaclaro">Cancelar</a>
+        </div>
     </form>
 </div>
 

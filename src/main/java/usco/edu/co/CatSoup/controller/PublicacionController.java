@@ -24,22 +24,29 @@ public class PublicacionController {
     private final PublicacionService publicacionService;
     private final UserService userService;
 
-    // ================================
+    // =====================================================
     // 🔹 RUTAS DE USUARIO NORMAL
-    // ================================
+    // =====================================================
     @Controller
     @RequestMapping("/user/publicaciones")
     @RequiredArgsConstructor
     static class UserPublicacionController {
+
         private final PublicacionService publicacionService;
         private final UserService userService;
 
-        // Ruta donde se guardarán las imágenes
-        private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
+        private static final String UPLOAD_DIR = "uploads/publicaciones/";
+
+        private String getRedirectByRole(Authentication auth) {
+            boolean isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+            return isAdmin ? "redirect:/admin/publicaciones" : "redirect:/user/publicaciones";
+        }
 
         @GetMapping
         public String listar(Model model, Authentication auth) {
-            model.addAttribute("publicaciones", publicacionService.findAll()); // 👈 cambia a findAll()
+            model.addAttribute("publicaciones", publicacionService.findAll());
             User user = userService.findByEmail(auth.getName()).get();
             model.addAttribute("userId", user.getId());
             return "user/publicaciones";
@@ -63,8 +70,8 @@ public class PublicacionController {
             p.setContenido(contenido);
             p.setUser(user);
 
-            // 👇 Si hay imagen, la guardamos físicamente
             if (imagen != null && !imagen.isEmpty()) {
+
                 File uploadDir = new File(UPLOAD_DIR);
                 if (!uploadDir.exists()) uploadDir.mkdirs();
 
@@ -72,12 +79,12 @@ public class PublicacionController {
                 Path filePath = Paths.get(UPLOAD_DIR + fileName);
                 Files.write(filePath, imagen.getBytes());
 
-                // Guardamos la ruta que Thymeleaf pueda acceder
-                p.setImagen("/uploads/" + fileName);
+                p.setImagen("/uploads/publicaciones/" + fileName);
             }
 
             publicacionService.save(p);
-            return "redirect:/user/publicaciones";
+
+            return getRedirectByRole(auth);
         }
 
         @GetMapping("/eliminar/{id}")
@@ -88,21 +95,29 @@ public class PublicacionController {
             if (p.getUser().getId().equals(user.getId())) {
                 publicacionService.delete(id);
             }
-            return "redirect:/user/publicaciones";
+            return getRedirectByRole(auth);
         }
     }
 
-    // ================================
+    // =====================================================
     // 🔹 RUTAS DE ADMINISTRADOR
-    // ================================
+    // =====================================================
     @Controller
     @RequestMapping("/admin/publicaciones")
     @RequiredArgsConstructor
     static class AdminPublicacionController {
+
         private final PublicacionService publicacionService;
         private final UserService userService;
 
-        private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
+        private static final String UPLOAD_DIR = "uploads/publicaciones/";
+
+        private String getRedirectByRole(Authentication auth) {
+            boolean isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+            return isAdmin ? "redirect:/admin/publicaciones" : "redirect:/user/publicaciones";
+        }
 
         @GetMapping
         public String listar(Model model) {
@@ -129,23 +144,26 @@ public class PublicacionController {
             p.setUser(user);
 
             if (imagen != null && !imagen.isEmpty()) {
+
                 File uploadDir = new File(UPLOAD_DIR);
                 if (!uploadDir.exists()) uploadDir.mkdirs();
 
                 String fileName = System.currentTimeMillis() + "_" + imagen.getOriginalFilename();
                 Path filePath = Paths.get(UPLOAD_DIR + fileName);
                 Files.write(filePath, imagen.getBytes());
-                p.setImagen("/uploads/" + fileName);
+
+                p.setImagen("/uploads/publicaciones/" + fileName);
             }
 
             publicacionService.save(p);
-            return "redirect:/admin/publicaciones";
+
+            return getRedirectByRole(auth);
         }
 
         @GetMapping("/eliminar/{id}")
-        public String eliminar(@PathVariable Long id) {
+        public String eliminar(@PathVariable Long id, Authentication auth) {
             publicacionService.delete(id);
-            return "redirect:/admin/publicaciones";
+            return getRedirectByRole(auth);
         }
     }
 }

@@ -33,4 +33,15 @@ public class EstacionServiceImpl implements EstacionService {
     public void delete(Long id) {
         estacionRepository.deleteById(id);
     }
+
+    @Override
+    public boolean existeNombre(String nombre) {   // ✅ AGREGADO
+        return estacionRepository.existsByNombre(nombre);
+    }
+
+    @Override
+    public boolean existeImagen(String imagen) {   // ✅ AGREGADO
+        return estacionRepository.existsByImagen(imagen);
+    }
 }
+

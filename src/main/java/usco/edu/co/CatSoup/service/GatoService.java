@@ -9,4 +9,7 @@ public interface GatoService {
     Gato findById(Long id);
     Gato save(Gato gato);
     void delete(Long id);
+
+    boolean existeNombre(String nombre);
+    boolean existeImagen(String imagen);
 }

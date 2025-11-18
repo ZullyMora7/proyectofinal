@@ -33,5 +33,16 @@ public class GatoServiceImpl implements GatoService {
     public void delete(Long id) {
         gatoRepository.deleteById(id);
     }
-}
 
+    // ✔ Validación de nombre único
+    @Override
+    public boolean existeNombre(String nombre) {
+        return gatoRepository.existsByNombre(nombre);
+    }
+
+    // ✔ Validación de imagen única
+    @Override
+    public boolean existeImagen(String imagen) {
+        return gatoRepository.existsByImagen(imagen);
+    }
+}

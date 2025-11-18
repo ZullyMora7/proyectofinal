@@ -10,4 +10,7 @@ public interface EstacionService {
     Estacion findById(Long id);
     Estacion save(Estacion estacion);
     void delete(Long id);
+
+    boolean existeNombre(String nombre);  // ✅ AGREGADO
+    boolean existeImagen(String imagen);  // ✅ AGREGADO
 }

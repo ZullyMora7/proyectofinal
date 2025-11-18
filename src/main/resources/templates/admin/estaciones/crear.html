@@ -7,41 +7,56 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    
 </head>
 
 <body>
 <div th:replace="fragments/navbar :: navbarAdmin"></div>
 
 <div class="container mt-4">
-    <h2>Añadir Estación</h2>
+    <h2>Añadir Estación de Cocina</h2>
 
-    <!-- IMPORTANTE: ahora es multipart -->
-    <form th:action="@{/admin/estaciones/guardar}" 
+    <form th:action="@{/admin/estaciones/guardar}"
           th:object="${estacion}"
           method="post"
           enctype="multipart/form-data">
 
-        <div class="mb-3">
-            <label class="form-label">Nombre</label>
-            <input type="text" class="form-control" th:field="*{nombre}" required>
+        <!-- NOMBRE -->
+        <label class="form-label">Nombre</label>
+        <input type="text" class="form-control mb-3" th:field="*{nombre}" required>
+
+        <!-- ❗ Mensaje de error del nombre -->
+        <div class="text-danger"
+             th:if="${#fields.hasErrors('nombre')}"
+             th:errors="*{nombre}">
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Descripción</label>
-            <textarea class="form-control" th:field="*{descripcion}"></textarea>
+        <!-- DESCRIPCIÓN -->
+        <label class="form-label">Descripción</label>
+        <textarea class="form-control mb-3" th:field="*{descripcion}" required></textarea>
+        
+
+        <!-- ❗ Mensaje de error de la descripción -->
+        <div class="text-danger"
+             th:if="${#fields.hasErrors('descripcion')}"
+             th:errors="*{descripcion}">
         </div>
 
-        <!-- CAMBIO IGUAL A VESTUARIO -->
-        <div class="mb-3">
-            <label class="form-label">Imagen</label>
-            <input type="file" class="form-control" name="imagenArchivo" accept="image/*" required>
+        <!-- IMAGEN -->
+        <label class="form-label">Imagen</label>
+        <input type="file" class="form-control mb-3" name="imagenArchivo" accept="image/*" required>
+
+        <!-- OTROS ERRORES (nombre repetido, imagen repetida) -->
+        <div th:if="${error}" class="text-danger mb-3" th:text="${error}"></div>
+
+        
+        
+        <div class="d-flex gap-2">
+            <button class="btn-rosa">Guardar</button>
+            <a th:href="@{/admin/estaciones}" class="btn-rosaclaro">Cancelar</a>
         </div>
-
-        <button class="btn btn-success">Guardar</button>
-
     </form>
 </div>
 
 </body>
 </html>
+
