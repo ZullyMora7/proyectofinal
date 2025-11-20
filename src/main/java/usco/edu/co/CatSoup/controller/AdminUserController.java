@@ -1,6 +1,8 @@
 package usco.edu.co.CatSoup.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +21,47 @@ public class AdminUserController {
     private final RoleRepository roleRepository;
 
     // ============================================================
+    // MÉTODO NUEVO: OBTENER USUARIO EN SESIÓN (robusto: email o username)
+    // ============================================================
+    private User getUsuarioEnSesion() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null) return null;
+
+        String name = auth.getName();
+        if (name == null || "anonymousUser".equals(name)) return null;
+
+        // intenta por email primero (como en UserController), luego por username
+        return userService.findByEmail(name)
+                .or(() -> userService.findByUsername(name))
+                .orElse(null);
+    }
+
+    // ============================================================
+    // FORMULARIO: EDITAR USUARIO (UNIFICADO, envía usuarioSesion)
+    // ============================================================
+    @GetMapping("/edit/{id}")
+    public String editUserForm(@PathVariable Long id, Model model) {
+
+        User user = userService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        model.addAttribute("user", user);
+        model.addAttribute("roles", roleRepository.findAll());
+
+        // enviar usuario en sesión para que la vista pueda comparar ids
+        model.addAttribute("usuarioSesion", getUsuarioEnSesion());
+
+        return "admin/users/edit-user";
+    }
+
+    // ============================================================
     // LISTAR USUARIOS
     // ============================================================
     @GetMapping
     public String listUsers(Model model) {
         model.addAttribute("users", userService.findAll());
+        model.addAttribute("usuarioSesion", getUsuarioEnSesion());
         return "admin/users/users";
     }
 
@@ -49,7 +87,7 @@ public class AdminUserController {
             Role role = roleRepository.findById(roleId)
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
-            user.setRole(role); // ← CORRECTO: asignamos rol antes de guardar
+            user.setRole(role);
 
             userService.registerUser(user);
 
@@ -72,21 +110,6 @@ public class AdminUserController {
     }
 
     // ============================================================
-    // FORMULARIO: EDITAR USUARIO
-    // ============================================================
-    @GetMapping("/edit/{id}")
-    public String editUserForm(@PathVariable Long id, Model model) {
-
-        User user = userService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        model.addAttribute("user", user);
-        model.addAttribute("roles", roleRepository.findAll());
-
-        return "admin/users/edit-user";
-    }
-
-    // ============================================================
     // ACTUALIZAR USUARIO
     // ============================================================
     @PostMapping("/update")
@@ -95,14 +118,18 @@ public class AdminUserController {
                              Model model) {
 
         try {
+
             Role role = roleRepository.findById(roleId)
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
-            user.setRole(role); // ← CORRECTO: este era el problema
+            user.setRole(role);
 
-            userService.updateUser(user); // ← Sobrescribe en BD
+            userService.updateUser(user);
 
         } catch (IllegalArgumentException e) {
+
+            User originalUser = userService.findById(user.getId())
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
             if ("EMAIL_EXISTS".equals(e.getMessage())) {
                 model.addAttribute("error", "El correo electrónico ya está registrado ⚠️");
@@ -112,8 +139,12 @@ public class AdminUserController {
                 model.addAttribute("error", "Ocurrió un error: " + e.getMessage());
             }
 
-            model.addAttribute("user", user);
+            model.addAttribute("user", originalUser);
             model.addAttribute("roles", roleRepository.findAll());
+
+            // volver a enviar usuario en sesión para la vista
+            model.addAttribute("usuarioSesion", getUsuarioEnSesion());
+
             return "admin/users/edit-user";
         }
 

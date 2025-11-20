@@ -48,7 +48,11 @@ public class UserController {
             return "redirect:/login";
         }
 
-        model.addAttribute("user", user);
+        // *** Agregado para evitar errores cuando regresa del redirect ***
+        if (!model.containsAttribute("user")) {
+            model.addAttribute("user", user);
+        }
+
         return "user/perfil";
     }
 
@@ -66,58 +70,62 @@ public class UserController {
         User current = userService.findById(formUser.getId()).orElse(null);
 
         if (current == null) {
-            redirectAttrs.addFlashAttribute("error", "Usuario no encontrado en base de datos.");
+            redirectAttrs.addFlashAttribute("error", "Usuario no encontrado.");
             return "redirect:/login";
         }
 
-        // Campos obligatorios
+        // Validación campos obligatorios
         if (formUser.getUsername() == null || formUser.getUsername().trim().isEmpty() ||
-            formUser.getEmail() == null || formUser.getEmail().trim().isEmpty() ||
-            formUser.getPassword() == null || formUser.getPassword().trim().isEmpty()) {
+            formUser.getEmail() == null || formUser.getEmail().trim().isEmpty()) {
 
-            redirectAttrs.addFlashAttribute("error", "Debe llenar todos los campos.");
+            redirectAttrs.addFlashAttribute("error", "Debe llenar todos los campos obligatorios.");
             return "redirect:/user/perfil";
         }
 
         String newEmail = formUser.getEmail().trim();
         String newUsername = formUser.getUsername().trim();
 
-        // VALIDAR EMAIL ÚNICO (arreglado)
+        // Validación email único
         if (!newEmail.equalsIgnoreCase(current.getEmail())) {
-            userService.findByEmail(newEmail).ifPresent(other -> {
-                if (!other.getId().equals(current.getId())) {
-                    redirectAttrs.addFlashAttribute("error", "El correo ya está en uso.");
-                }
-            });
-
-            if (redirectAttrs.containsAttribute("error")) {
+            if (userService.findByEmail(newEmail).isPresent()) {
+                redirectAttrs.addFlashAttribute("error", "El correo ya está en uso.");
                 return "redirect:/user/perfil";
             }
         }
 
-        // VALIDAR USERNAME ÚNICO (arreglado)
+        // Validación username único
         if (!newUsername.equalsIgnoreCase(current.getUsername())) {
-            userService.findByUsername(newUsername).ifPresent(other -> {
-                if (!other.getId().equals(current.getId())) {
-                    redirectAttrs.addFlashAttribute("error", "El nombre de usuario ya está en uso.");
-                }
-            });
-
-            if (redirectAttrs.containsAttribute("error")) {
+            if (userService.findByUsername(newUsername).isPresent()) {
+                redirectAttrs.addFlashAttribute("error", "El nombre de usuario ya está en uso.");
                 return "redirect:/user/perfil";
             }
         }
 
-        // Guardar cambios
+        // Actualizar datos básicos
         current.setUsername(newUsername);
         current.setEmail(newEmail);
-        current.setPassword(passwordEncoder.encode(formUser.getPassword()));
+
+        // *******************************
+        // MANEJO CORRECTO DE CONTRASEÑA
+        // *******************************
+        if (formUser.getPassword() != null && !formUser.getPassword().trim().isEmpty()) {
+
+            String newPass = formUser.getPassword().trim();
+
+            // Si el usuario escribió su misma contraseña → NO la re-encripta
+            if (!passwordEncoder.matches(newPass, current.getPassword())) {
+                current.setPassword(passwordEncoder.encode(newPass));
+            }
+        }
+        // *******************************
 
         userService.save(current);
 
-        // Cerrar sesión
+        // Cerrar sesión por seguridad
         try {
-            request.getSession(false).invalidate();
+            if (request.getSession(false) != null) {
+                request.getSession(false).invalidate();
+            }
         } catch (Exception ignored) {}
 
         SecurityContextHolder.clearContext();

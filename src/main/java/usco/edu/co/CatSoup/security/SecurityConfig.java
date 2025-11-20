@@ -34,9 +34,14 @@ public class SecurityConfig {
                         // Admin
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // User y admin
-                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                        // Todo lo demás: requiere autenticación
+                        .requestMatchers("/user/**").hasAnyRole("USER")
+                        // Todo lo demás requiere autenticación
                         .anyRequest().authenticated()
+                )
+
+                // ❗❗ NUEVA PÁGINA DE ACCESO DENEGADO
+                .exceptionHandling(ex -> ex
+                        .accessDeniedPage("/acceso-denegado")
                 )
 
                 // 🔑 LOGIN
@@ -63,4 +68,5 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 }
+
 

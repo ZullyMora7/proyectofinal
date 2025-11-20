@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Usuarios</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,7 +17,6 @@
 
     <h2 class="mb-3">👥 Gestión de Usuarios</h2>
 
-    <!-- Igual que en gatos y vestuario -->
     <a class="btn-rosa mb-3" th:href="@{/admin/users/new}">Crear Usuario</a>
 
     <table class="table table-bordered table-striped align-middle">
@@ -37,13 +37,22 @@
             <td th:text="${u.email}"></td>
             <td th:text="${u.role.name}"></td>
 
-            <!-- MISMA ALINEACIÓN Y ESTILO DE BOTONES -->
             <td class="alineado-horizontal">
 
-                <a th:href="@{'/admin/users/edit/' + ${u.id}}" 
+                <!-- ========= BOTÓN DINÁMICO ========= -->
+                <a th:if="${usuarioSesion != null and u.id == usuarioSesion.id}"
+                   th:href="@{/admin/perfil}"
+                   class="btn-rosa">
+                    Mi perfil
+                </a>
+
+                <a th:if="${usuarioSesion == null or u.id != usuarioSesion.id}"
+                   th:href="@{'/admin/users/edit/' + ${u.id}}"
                    class="btn-rosa">
                     Editar
                 </a>
+
+                <!-- ================================== -->
 
                 <a th:href="@{'/admin/users/delete/' + ${u.id}}"
                    class="btn-rosaclaro"
@@ -60,5 +69,3 @@
 
 </body>
 </html>
-
-

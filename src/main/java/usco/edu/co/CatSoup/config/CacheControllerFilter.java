@@ -18,10 +18,11 @@ public class CacheControllerFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        // 🚫 Bloquear caché completamente
-        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        // 🚫 Bloquear caché y bfcache
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
         res.setHeader("Pragma", "no-cache");
-        res.setDateHeader("Expires", 0);
+        res.setHeader("Expires", "0");
+        res.setHeader("Clear-Site-Data", "\"cache\"");
 
         HttpSession session = req.getSession(false);
 
