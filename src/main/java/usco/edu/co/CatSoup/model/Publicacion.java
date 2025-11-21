@@ -20,9 +20,12 @@ public class Publicacion {
 
     private String imagen; // opcional
 
-    // ✅ FECHA AUTOMÁTICA IGUAL QUE EN RESENA
     @Column(nullable = false)
     private LocalDateTime fecha = LocalDateTime.now();
+
+    // NUEVOS CAMPOS
+    private LocalDateTime fechaEdicion;
+    private boolean editado = false;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
@@ -55,13 +56,14 @@ public class PublicacionController {
         @GetMapping("/crear")
         public String mostrarFormulario(Model model) {
             model.addAttribute("publicacion", new Publicacion());
+            model.addAttribute("ruta", "/user/publicaciones/crear");
             return "fragments/form-publicaciones";
         }
 
         @PostMapping("/crear")
         public String crear(@RequestParam String titulo,
                             @RequestParam String contenido,
-                            @RequestParam(value = "imagen", required = false) MultipartFile imagen,
+                            @RequestParam(value = "imagenFile", required = false) MultipartFile imagen,
                             Authentication auth) throws IOException {
 
             User user = userService.findByEmail(auth.getName()).get();
@@ -90,42 +92,42 @@ public class PublicacionController {
             User user = userService.findByEmail(auth.getName()).get();
             Publicacion p = publicacionService.findById(id);
 
-            if (p.getUser().getId().equals(user.getId())) {
+            if (p != null && p.getUser() != null && p.getUser().getId().equals(user.getId())) {
                 publicacionService.delete(id);
             }
             return getRedirectByRole(auth);
         }
 
-        // 🔄 Nueva ruta: editar publicación
         @GetMapping("/editar/{id}")
         public String editar(@PathVariable Long id, Model model, Authentication auth) {
             Publicacion p = publicacionService.findById(id);
             User user = userService.findByEmail(auth.getName()).get();
 
-            if (p == null || !p.getUser().getId().equals(user.getId())) {
+            if (p == null || p.getUser() == null || !p.getUser().getId().equals(user.getId())) {
                 return "redirect:/user/publicaciones";
             }
 
             model.addAttribute("publicacion", p);
+            model.addAttribute("ruta", "/user/publicaciones/editar");
             return "fragments/form-publicaciones";
         }
 
         @PostMapping("/editar")
         public String actualizar(@ModelAttribute Publicacion publicacion,
-                                 @RequestParam("imagen") MultipartFile imagen,
+                                 @RequestParam(value = "imagenFile", required = false) MultipartFile imagen,
                                  Authentication auth) throws IOException {
 
             User user = userService.findByEmail(auth.getName()).get();
             Publicacion p = publicacionService.findById(publicacion.getId());
 
-            if (p == null || !p.getUser().getId().equals(user.getId())) {
+            if (p == null || p.getUser() == null || !p.getUser().getId().equals(user.getId())) {
                 return "redirect:/user/publicaciones";
             }
 
             p.setTitulo(publicacion.getTitulo());
             p.setContenido(publicacion.getContenido());
 
-            if (!imagen.isEmpty()) {
+            if (imagen != null && !imagen.isEmpty()) {
                 File uploadDir = new File(UPLOAD_DIR);
                 if (!uploadDir.exists()) uploadDir.mkdirs();
 
@@ -135,6 +137,9 @@ public class PublicacionController {
 
                 p.setImagen("/uploads/publicaciones/" + fileName);
             }
+
+            p.setEditado(true);
+            p.setFechaEdicion(LocalDateTime.now());
 
             publicacionService.save(p);
             return "redirect:/user/publicaciones";
@@ -163,6 +168,7 @@ public class PublicacionController {
         @GetMapping("/crear")
         public String mostrarFormulario(Model model) {
             model.addAttribute("publicacion", new Publicacion());
+            model.addAttribute("ruta", "/admin/publicaciones/crear");
             return "fragments/form-publicaciones";
         }
 
@@ -199,7 +205,6 @@ public class PublicacionController {
             return "redirect:/admin/publicaciones";
         }
 
-        // 🔄 Nueva ruta: editar publicación como admin
         @GetMapping("/editar/{id}")
         public String editar(@PathVariable Long id, Model model) {
             Publicacion p = publicacionService.findById(id);
@@ -209,12 +214,13 @@ public class PublicacionController {
             }
 
             model.addAttribute("publicacion", p);
+            model.addAttribute("ruta", "/admin/publicaciones/editar");
             return "fragments/form-publicaciones";
         }
 
         @PostMapping("/editar")
         public String actualizar(@ModelAttribute Publicacion publicacion,
-                                 @RequestParam("imagen") MultipartFile imagen) throws IOException {
+                                 @RequestParam(value = "imagenFile", required = false) MultipartFile imagen) throws IOException {
 
             Publicacion p = publicacionService.findById(publicacion.getId());
 
@@ -225,7 +231,7 @@ public class PublicacionController {
             p.setTitulo(publicacion.getTitulo());
             p.setContenido(publicacion.getContenido());
 
-            if (!imagen.isEmpty()) {
+            if (imagen != null && !imagen.isEmpty()) {
                 File uploadDir = new File(UPLOAD_DIR);
                 if (!uploadDir.exists()) uploadDir.mkdirs();
 
@@ -236,9 +242,11 @@ public class PublicacionController {
                 p.setImagen("/uploads/publicaciones/" + fileName);
             }
 
+            p.setEditado(true);
+            p.setFechaEdicion(LocalDateTime.now());
+
             publicacionService.save(p);
             return "redirect:/admin/publicaciones";
         }
     }
 }
-

@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Administrar Publicaciones 🐾</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="js/script.js"></script>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
@@ -19,8 +21,8 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Gestión de Publicaciones 🐾</h2>
 
-        <a th:href="@{/admin/publicaciones/crear}" class="btn btn-primary">
-            ➕ Crear publicación
+        <a th:href="@{/admin/publicaciones/crear}" class="btn-rosa">
+            Crear publicación
         </a>
     </div>
 
@@ -43,33 +45,46 @@
 
                     <div>
                         <strong th:text="${pub.user.username}"></strong><br>
+
+                        <!-- FECHA PUBLICACIÓN (LocalDateTime CORREGIDO) -->
                         <small class="text-muted"
-                               th:text="${#temporals.format(pub.fecha, 'dd/MM/yyyy HH:mm')}"></small>
+                               th:text="${pub.fecha != null ? pub.fecha.format(T(java.time.format.DateTimeFormatter).ofPattern('dd/MM/yyyy HH:mm')) : ''}">
+                        </small>
+
+                        <!-- SI ESTÁ EDITADO -->
+                        <br>
+                        <small class="text-muted" th:if="${pub.editado}">
+                            (Editado:
+                            <span th:text="${pub.fechaEdicion != null ? pub.fechaEdicion.format(T(java.time.format.DateTimeFormatter).ofPattern('dd/MM/yyyy HH:mm')) : ''}"></span>
+                            )
+                        </small>
                     </div>
                 </div>
 
-                <div>
+                <div class="alineado-horizontal">
                     <a th:href="@{'/admin/publicaciones/editar/' + ${pub.id}}"
-                       class="btn btn-sm btn-warning">✏️ Editar</a>
+                       class="btn-rosa">✏️ Editar</a>
 
                     <a th:href="@{'/admin/publicaciones/eliminar/' + ${pub.id}}"
-                       class="btn btn-sm btn-danger"
+                       class="btn-rosaclaro"
                        onclick="return confirm('¿Estás seguro de eliminar esta publicación?');">
                         🗑️ Eliminar
                     </a>
                 </div>
             </div>
 
-            <!-- Imagen -->
+
+
+
             <div th:if="${pub.imagen}" class="text-center mt-3">
+                        <!-- Contenido -->
+            <h5 th:text="${pub.titulo}" class="card-title mt-3"></h5>
+            <p th:text="${pub.contenido}" class="card-text"></p>
+                        <!-- Imagen -->
+            
                 <img th:src="@{${pub.imagen}}" class="img-fluid rounded"
                      style="max-height: 300px;">
             </div>
-
-            <!-- Contenido -->
-            <h5 th:text="${pub.titulo}" class="card-title mt-3"></h5>
-            <p th:text="${pub.contenido}" class="card-text"></p>
-
         </div>
     </div>
 
@@ -77,7 +92,3 @@
 
 </body>
 </html>
-
-
-
-

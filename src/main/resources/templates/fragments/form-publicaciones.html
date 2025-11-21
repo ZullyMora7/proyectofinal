@@ -7,6 +7,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 
     <style>
         body { background-color: #f8f9fa; }
@@ -17,6 +18,10 @@
 
 <body>
 
+<!-- Navbar usuario o admin (ambas se incluyen así como tú lo tienes) -->
+<div th:replace="fragments/navbar :: navbarUsuario"></div>
+<div th:replace="fragments/navbar :: navbarAdmin"></div>
+
 <div class="container mt-5">
     <div class="card shadow p-4">
 
@@ -24,43 +29,52 @@
             th:text="${publicacion.id} != null ? '✏️ Editar Publicación' : '🐱 Crear una nueva Publicación'"></h2>
 
         <!-- FORMULARIO -->
-<form th:action="${publicacion.id} != null ?
-        '/user/publicaciones/editar' :
-        '/user/publicaciones/crear'"
-      method="post"
-      enctype="multipart/form-data"
-      th:object="${publicacion}">
+        <form th:action="${ruta}"
+              method="post"
+              enctype="multipart/form-data"
+              th:object="${publicacion}">
 
-    <input type="hidden" th:if="${publicacion.id}" th:field="*{id}">
+            <!-- ID oculto solo cuando estamos editando -->
+            <input type="hidden" th:if="${publicacion.id}" th:field="*{id}">
 
-    <div class="mb-3">
-        <label class="form-label">Título</label>
-        <input type="text" th:field="*{titulo}" class="form-control" required>
-    </div>
+            <!-- TÍTULO -->
+            <div class="mb-3">
+                <label class="form-label">Título</label>
+                <input type="text" th:field="*{titulo}" class="form-control" required>
+            </div>
 
-    <div class="mb-3">
-        <label class="form-label">Contenido</label>
-        <textarea th:field="*{contenido}" class="form-control" rows="4" required></textarea>
-    </div>
+            <!-- CONTENIDO -->
+            <div class="mb-3">
+                <label class="form-label">Contenido</label>
+                <textarea th:field="*{contenido}" class="form-control" rows="4" required></textarea>
+            </div>
 
-    <div class="mb-3">
-        <label class="form-label">Imagen (opcional)</label>
-        <input type="file" name="imagen" class="form-control" accept="image/*" onchange="previewImage(event)">
+            <!-- IMAGEN -->
+            <div class="mb-3">
+                <label class="form-label">Imagen (opcional)</label>
 
-        <img th:if="${publicacion.imagen != null}"
-             th:src="${publicacion.imagen}"
-             class="preview-img" style="display:block">
+                <!-- Este input NO usa th:field porque imagen no pertenece al object -->
+<input type="file" name="imagenFile" class="form-control" accept="image/*" onchange="previewImage(event)">
 
-        <img id="preview" class="preview-img" alt="Vista previa">
-    </div>
+                <!-- Imagen actual -->
+                <img th:if="${publicacion.imagen != null}"
+                     th:src="${publicacion.imagen}"
+                     id="imagenActual"
+                     class="preview-img"
+                     style="display:block">
 
-    <div class="d-flex justify-content-between">
-        <a href="javascript:history.back()" class="btn btn-secondary">↩️ Volver</a>
-        <button type="submit" class="btn btn-primary"
-                th:text="${publicacion.id} != null ? '💾 Guardar cambios' : '🚀 Publicar'"></button>
-    </div>
+                <!-- Vista previa -->
+                <img id="preview" class="preview-img" alt="Vista previa">
+            </div>
 
-</form>
+            <!-- BOTONES -->
+            <div class="d-flex justify-content-between">
+                <a href="javascript:history.back()" class="btn btn-secondary">↩️ Volver</a>
+                <button type="submit" class="btn btn-primary"
+                        th:text="${publicacion.id} != null ? '💾 Guardar cambios' : '🚀 Publicar'"></button>
+            </div>
+
+        </form>
 
     </div>
 </div>
@@ -69,10 +83,12 @@
     function previewImage(event) {
         const file = event.target.files[0];
         const preview = document.getElementById("preview");
+        const imgActual = document.getElementById("imagenActual");
 
         if (file) {
             const reader = new FileReader();
             reader.onload = e => {
+                if (imgActual) imgActual.style.display = "none";
                 preview.src = e.target.result;
                 preview.style.display = "block";
             };
@@ -83,4 +99,3 @@
 
 </body>
 </html>
-
